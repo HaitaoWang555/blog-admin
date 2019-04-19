@@ -42,11 +42,10 @@ export const constantRoutes = [
     path: '/',
     component: Layout,
     redirect: '/dashboard',
-    name: 'Dashboard',
     children: [{
       path: 'dashboard',
       name: 'Dashboard',
-      meta: { title: 'Dashboard', icon: 'dashboard' },
+      meta: { title: '仪表盘', icon: 'dashboard' },
       component: () => import('@/views/dashboard/index')
     }]
   },
@@ -57,7 +56,7 @@ export const constantRoutes = [
     children: [
       {
         path: 'https://panjiachen.github.io/vue-element-admin-site/#/',
-        meta: { title: 'External Link', icon: 'link' }
+        meta: { title: '文档说明', icon: 'link' }
       }
     ]
   },

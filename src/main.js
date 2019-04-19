@@ -25,6 +25,12 @@ import '@/permission' // permission control
  */
 import '../mock' // simulation data
 
+// register global utility filters.
+import * as filters from './filters' // global filters
+Object.keys(filters).forEach(key => {
+  Vue.filter(key, filters[key])
+})
+
 Vue.use(ElementUI, { locale, size: 'small', zIndex: 3000 })
 
 Vue.config.productionTip = false

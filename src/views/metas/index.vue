@@ -100,13 +100,13 @@
       @pagination="getList"
     />
     <el-dialog :visible="dialog" :title="dialogTitle" append-to-body @close="closeDialog">
-      <Meta v-if="dialog" :meta="metaData" />
+      <Meta v-if="dialog" :meta="metaData" :close="closeDialog" />
     </el-dialog>
   </div>
 </template>
 
 <script>
-import { fetchList } from '@/api/metas'
+import { fetchList, delMetas } from '@/api/metas'
 import Pagination from '@/components/Pagination'
 import Meta from './meta'
 
@@ -187,21 +187,40 @@ export default {
       this.multipleSelection = val
     },
     btnEvent(val) {
+      const defaultMeta = {
+        name: '',
+        type: 'tag',
+        textColor: '#ffffff',
+        color: '#409EFF'
+      }
       switch (val) {
         case 'add':
           this.dialog = true
           this.dialogTitle = '新增'
+          this.metaData = defaultMeta
           this.metaData.moudle = 'add'
           break
 
+        case 'del':
+          (async() => {
+            const ids = this.multipleSelection.map(i => i.id).join(',')
+            if (!ids) return
+            console.log(ids)
+            const res = await delMetas(ids)
+            // this.$tips(res)
+            console.log(res.data)
+          })()
+          break
         default:
           break
       }
     },
     search() {},
     edit(row) {
+      const editMeta = row
       this.dialog = true
       this.dialogTitle = '修改'
+      this.metaData = editMeta
       this.metaData.moudle = 'edit'
     },
     closeDialog() {

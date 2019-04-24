@@ -7,7 +7,7 @@
       label-position="right"
       label-width="100px"
       class="formWrap"
-      style="width: 60%; margin: 0 auto"
+      style="max-width: 420px; margin: 0 auto"
     >
       <el-form-item label="名称" prop="name">
         <el-input v-model="meta.name" />
@@ -47,19 +47,20 @@
 </template>
 
 <script>
+import { createMetas, updateMetas } from '@/api/metas'
+
 export default {
   name: 'Meta',
   props: {
     meta: {
       type: Object,
       default: () => {
-        return {
-          name: '',
-          type: 'tag',
-          textColor: '#000000',
-          color: '#409EFF'
-        }
+        return {}
       }
+    },
+    close: {
+      type: Function,
+      default: null
     }
   },
   data() {
@@ -76,8 +77,45 @@ export default {
     }
   },
   methods: {
-    resetForm() {},
-    submitForm() {}
+    resetForm(formName) {
+      this.$refs[formName].resetFields()
+    },
+    submitForm(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          this.loading = true
+          switch (this.meta.moudle) {
+            case 'add':
+              this.add(this.meta)
+              break
+            case 'edit':
+              this.edit(this.meta)
+              break
+            default:
+              break
+          }
+        } else {
+          console.log('error submit!!')
+          return false
+        }
+      })
+    },
+    async add(form) {
+      console.log(form)
+      const res = await createMetas()
+      // this.$tips(res)
+      console.log(res.data)
+      this.loading = false
+      this.close()
+    },
+    async edit(form) {
+      console.log(form)
+      const res = await updateMetas()
+      // this.$tips(res)
+      console.log(res.data)
+      this.loading = false
+      this.close()
+    }
   }
 }
 </script>

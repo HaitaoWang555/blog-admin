@@ -1,0 +1,83 @@
+<template>
+  <div class="meta">
+    <el-form
+      ref="meta"
+      :model="meta"
+      :rules="formRules"
+      label-position="right"
+      label-width="100px"
+      class="formWrap"
+      style="width: 60%; margin: 0 auto"
+    >
+      <el-form-item label="名称" prop="name">
+        <el-input v-model="meta.name" />
+      </el-form-item>
+
+      <el-form-item label="选择类型" prop="type">
+        <el-select v-model="meta.type" placeholder="请选择类型" style="width: 100%">
+          <el-option label="标签" value="tag" />
+          <el-option label="分类" value="category" />
+        </el-select>
+      </el-form-item>
+
+      <el-form-item label="选择字体颜色">
+        <el-color-picker v-model="meta.textColor" size="mini" />
+      </el-form-item>
+      <el-form-item label="选择背景颜色">
+        <el-color-picker v-model="meta.color" size="mini" />
+      </el-form-item>
+
+      <el-form-item label-width="0" style="text-align: center">
+        <el-button
+          v-if="meta.moudle === 'add'"
+          :loading="loading"
+          type="primary"
+          @click="submitForm('meta')"
+        >提交</el-button>
+        <el-button
+          v-if="meta.moudle === 'edit'"
+          :loading="loading"
+          type="primary"
+          @click="submitForm('meta')"
+        >确认修改</el-button>
+        <el-button @click="resetForm('meta')">重置</el-button>
+      </el-form-item>
+    </el-form>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'Meta',
+  props: {
+    meta: {
+      type: Object,
+      default: () => {
+        return {
+          name: '',
+          type: 'tag',
+          textColor: '#000000',
+          color: '#409EFF'
+        }
+      }
+    }
+  },
+  data() {
+    return {
+      formRules: {
+        name: [
+          { required: true, message: '请输入名称', trigger: 'blur' }
+        ],
+        type: [
+          { type: 'string', required: true, message: '请选择类型', trigger: 'change' }
+        ]
+      },
+      loading: false
+    }
+  },
+  methods: {
+    resetForm() {},
+    submitForm() {}
+  }
+}
+</script>

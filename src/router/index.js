@@ -81,6 +81,23 @@ export const constantRoutes = [
     ]
   },
   {
+    path: '/metas',
+    component: Layout,
+    redirect: '/metas/index',
+    name: 'Tags',
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/metas/index'),
+        name: 'Metas',
+        meta: {
+          title: '标签与分类',
+          icon: 'article'
+        }
+      }
+    ]
+  },
+  {
     path: 'external-link',
     component: Layout,
     children: [

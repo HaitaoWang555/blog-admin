@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function fetchList(query) {
   return request({
-    url: '/manage/metas/list',
+    url: '/metas/list',
     method: 'get',
     params: query
   })
@@ -10,7 +10,7 @@ export function fetchList(query) {
 
 export function createMetas(data) {
   return request({
-    url: '/manage/metas/addone',
+    url: '/metas/addone',
     method: 'post',
     data
   })
@@ -18,7 +18,7 @@ export function createMetas(data) {
 
 export function updateMetas(data) {
   return request({
-    url: '/manage/metas/update',
+    url: '/metas/update',
     method: 'post',
     data
   })
@@ -26,7 +26,7 @@ export function updateMetas(data) {
 
 export function delMetas(id) {
   return request({
-    url: '/manage/metas/delete',
+    url: '/metas/delete',
     method: 'delete',
     params: { id }
   })

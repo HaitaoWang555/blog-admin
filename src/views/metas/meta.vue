@@ -102,7 +102,7 @@ export default {
     },
     async add(form) {
       console.log(form)
-      const res = await createMetas()
+      const res = await createMetas(form)
       // this.$tips(res)
       console.log(res.data)
       this.loading = false
@@ -110,7 +110,7 @@ export default {
     },
     async edit(form) {
       console.log(form)
-      const res = await updateMetas()
+      const res = await updateMetas(form)
       // this.$tips(res)
       console.log(res.data)
       this.loading = false

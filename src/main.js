@@ -11,6 +11,7 @@ import '@/styles/index.scss' // global css
 import App from './App'
 import store from './store'
 import router from './router'
+import { tips } from '@/utils/tips'
 
 import '@/icons' // icon
 import '@/permission' // permission control
@@ -22,6 +23,8 @@ Object.keys(filters).forEach(key => {
 })
 
 Vue.use(ElementUI, { locale, size: 'small', zIndex: 3000 })
+
+Vue.prototype.$tips = tips
 
 Vue.config.productionTip = false
 

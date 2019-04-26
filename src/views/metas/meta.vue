@@ -101,18 +101,14 @@ export default {
       })
     },
     async add(form) {
-      console.log(form)
       const res = await createMetas(form)
-      // this.$tips(res)
-      console.log(res.data)
+      this.$tips(res)
       this.loading = false
       this.close()
     },
     async edit(form) {
-      console.log(form)
       const res = await updateMetas(form)
-      // this.$tips(res)
-      console.log(res.data)
+      this.$tips(res)
       this.loading = false
       this.close()
     }

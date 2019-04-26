@@ -205,10 +205,8 @@ export default {
           (async() => {
             const ids = this.multipleSelection.map(i => i.id).join(',')
             if (!ids) return
-            console.log(ids)
             const res = await delMetas(ids)
-            // this.$tips(res)
-            console.log(res.data)
+            this.$tips(res)
           })()
           break
         default:

@@ -3,7 +3,6 @@
     <el-form ref="postForm" :model="postForm" :rules="rules" class="form-container">
       <sticky :z-index="10" :class-name="'sub-navbar '+postForm.status">
         <CommentDropdown v-model="postForm.comment_disabled" />
-        <PlatformDropdown v-model="postForm.platforms" />
         <el-button v-loading="loading" style="margin-left: 10px;" type="success" @click="submitForm">
           发布
         </el-button>
@@ -24,41 +23,29 @@
 
             <div class="postInfo-container">
               <el-row>
-                <!-- <el-col :span="8">
-                  <el-form-item label-width="45px" label="作者:" class="postInfo-container-item">
-                    <el-select v-model="postForm.author" :remote-method="getRemoteUserList" filterable remote placeholder="搜索用户">
-                      <el-option v-for="(item,index) in userListOptions" :key="item+index" :label="item" :value="item" />
-                    </el-select>
-                  </el-form-item>
-                </el-col> -->
-
                 <el-col :span="10">
-                  <el-form-item label-width="80px" label="发布时间:" class="postInfo-container-item">
-                    <el-date-picker v-model="postForm.display_time" type="datetime" format="yyyy-MM-dd HH:mm:ss" placeholder="选择日期时间" />
-                  </el-form-item>
-                </el-col>
-
-                <el-col :span="6">
-                  <el-form-item label-width="60px" label="重要性:" class="postInfo-container-item">
-                    <el-rate
-                      v-model="postForm.importance"
-                      :max="3"
-                      :colors="['#99A9BF', '#F7BA2A', '#FF9900']"
-                      :low-threshold="1"
-                      :high-threshold="3"
-                      style="margin-top:8px;"
-                    />
+                  <el-form-item label-width="80px" label="标签&分类" class="postInfo-container-item">
+                    <el-select
+                      v-model="postForm.metaValue"
+                      multiple
+                      filterable
+                      allow-create
+                      default-first-option
+                      placeholder="请选择文章标签"
+                    >
+                      <el-option
+                        v-for="item in metaOptions"
+                        :key="item.id"
+                        :label="item.name"
+                        :value="item.id"
+                      />
+                    </el-select>
                   </el-form-item>
                 </el-col>
               </el-row>
             </div>
           </el-col>
         </el-row>
-
-        <el-form-item style="margin-bottom: 40px;" label-width="45px" label="摘要:">
-          <el-input v-model="postForm.content_short" :rows="1" type="textarea" class="article-textarea" autosize placeholder="请输入内容" />
-          <span v-show="contentShortLength" class="word-counter">{{ contentShortLength }}字</span>
-        </el-form-item>
 
         <el-form-item prop="content" style="margin-bottom: 30px;">
           <Tinymce ref="editor" v-model="postForm.content" :height="400" />
@@ -74,25 +61,22 @@ import Tinymce from '@/components/Tinymce'
 import MDinput from '@/components/MDinput'
 import Sticky from '@/components/Sticky' // 粘性header组件
 import { fetchArticle } from '@/api/article'
-import { CommentDropdown, PlatformDropdown } from './Dropdown'
+import { fetchList } from '@/api/metas'
+import { CommentDropdown } from './Dropdown'
 
 const defaultForm = {
   status: 'draft',
   title: '', // 文章题目
   content: '', // 文章内容
-  content_short: '', // 文章摘要
-  source_uri: '', // 文章外链
   image_uri: '', // 文章图片
   display_time: undefined, // 前台展示时间
   id: undefined,
-  platforms: ['a-platform'],
-  comment_disabled: false,
-  importance: 0
+  comment_disabled: false
 }
 
 export default {
   name: 'ArticleDetail',
-  components: { Tinymce, MDinput, Sticky, CommentDropdown, PlatformDropdown },
+  components: { Tinymce, MDinput, Sticky, CommentDropdown },
   props: {
     isEdit: {
       type: Boolean,
@@ -120,15 +104,8 @@ export default {
         title: [{ validator: validateRequire }],
         content: [{ validator: validateRequire }]
       },
-      tempRoute: {}
-    }
-  },
-  computed: {
-    contentShortLength() {
-      return this.postForm.content_short.length
-    },
-    lang() {
-      return this.$store.getters.language
+      tempRoute: {},
+      metaOptions: null // 标签、分类
     }
   },
   created() {
@@ -138,7 +115,9 @@ export default {
     } else {
       this.postForm = Object.assign({}, defaultForm)
     }
-
+    fetchList().then(res => {
+      this.metaOptions = res.data.items
+    })
     // Why need to make a copy of this.$route here?
     // Because if you enter this page and quickly switch tag, may be in the execution of the setTagsViewTitle function, this.$route is no longer pointing to the current page
     // https://github.com/PanJiaChen/vue-element-admin/issues/1221
@@ -150,7 +129,6 @@ export default {
         this.postForm = response.data
         // Just for test
         this.postForm.title += `   Article Id:${this.postForm.id}`
-        this.postForm.content_short += `   Article Id:${this.postForm.id}`
       }).catch(err => {
         console.log(err)
       })

@@ -64,7 +64,7 @@ service.interceptors.response.use(
           })
         })
       }
-      return Promise.reject(res.message || 'error')
+      return null
     } else {
       return res
     }
@@ -76,7 +76,7 @@ service.interceptors.response.use(
       type: 'error',
       duration: 5 * 1000
     })
-    return Promise.reject(error)
+    return null
   }
 )
 

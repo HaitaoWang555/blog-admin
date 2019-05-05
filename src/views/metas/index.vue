@@ -178,7 +178,12 @@ export default {
   methods: {
     async getList() {
       this.listLoading = true
-      const { data } = await fetchList(this.listQuery)
+      const res = await fetchList(this.listQuery)
+      if (!res) {
+        this.listLoading = false
+        return
+      }
+      const data = res.data
       const items = data.items
       this.list = items
       this.total = data.total
@@ -207,6 +212,7 @@ export default {
             const ids = this.multipleSelection.map(i => i.id).join(',')
             if (!ids) return
             const res = await delMetas(ids)
+            if (!res) return
             this.$tips(res)
             this.getList()
           })()

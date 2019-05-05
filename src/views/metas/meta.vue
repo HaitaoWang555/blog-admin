@@ -106,6 +106,10 @@ export default {
     },
     async add(form) {
       const res = await createMetas(form)
+      if (!res) {
+        this.loading = false
+        return
+      }
       this.$tips(res)
       this.loading = false
       this.close()
@@ -113,6 +117,10 @@ export default {
     },
     async edit(form) {
       const res = await updateMetas(form)
+      if (!res) {
+        this.loading = false
+        return
+      }
       this.$tips(res)
       this.loading = false
       this.close()

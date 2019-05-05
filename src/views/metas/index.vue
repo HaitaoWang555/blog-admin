@@ -85,7 +85,7 @@
 
       <el-table-column align="center" label="Actions" width="180">
         <template slot-scope="scope">
-          <el-button type="primary" icon="el-icon-edit" @click="edit(scope.row)">
+          <el-button type="primary" icon="el-icon-edit" @click="edit(scope.row, scope.$index)">
             修改
           </el-button>
         </template>
@@ -100,7 +100,7 @@
       @pagination="getList"
     />
     <el-dialog :visible="dialog" :title="dialogTitle" append-to-body @close="closeDialog">
-      <Meta v-if="dialog" :meta="metaData" :close="closeDialog" />
+      <Meta v-if="dialog" :meta="metaData" :close="closeDialog" :change="changeList" />
     </el-dialog>
   </div>
 </template>
@@ -168,7 +168,8 @@ export default {
       },
       dialog: false,
       dialogTitle: '',
-      metaData: {}
+      metaData: {},
+      changeIndex: 0
     }
   },
   created() {
@@ -207,6 +208,7 @@ export default {
             if (!ids) return
             const res = await delMetas(ids)
             this.$tips(res)
+            this.getList()
           })()
           break
         default:
@@ -214,8 +216,10 @@ export default {
       }
     },
     search() {},
-    edit(row) {
+    edit(row, index) {
       const editMeta = row
+
+      this.changeIndex = index
       this.dialog = true
       this.dialogTitle = '修改'
       this.metaData = editMeta
@@ -223,6 +227,10 @@ export default {
     },
     closeDialog() {
       this.dialog = false
+    },
+    changeList(data) {
+      this.$set(this.list, this.changeIndex, data || null)
+      this.changeIndex = 0
     }
   }
 }

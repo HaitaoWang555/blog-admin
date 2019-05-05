@@ -61,6 +61,10 @@ export default {
     close: {
       type: Function,
       default: null
+    },
+    change: {
+      type: Function,
+      default: null
     }
   },
   data() {
@@ -105,12 +109,14 @@ export default {
       this.$tips(res)
       this.loading = false
       this.close()
+      this.change(form)
     },
     async edit(form) {
       const res = await updateMetas(form)
       this.$tips(res)
       this.loading = false
       this.close()
+      this.change(form)
     }
   }
 }

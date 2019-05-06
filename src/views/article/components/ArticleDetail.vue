@@ -23,13 +23,13 @@
 
             <div class="postInfo-container">
               <el-row>
-                <el-col :span="10">
+                <el-col :span="6">
                   <el-form-item label-width="80px" label="标签&分类" class="postInfo-container-item">
                     <el-select
                       v-model="postForm.metaValue"
                       multiple
+                      collapse-tags
                       filterable
-                      allow-create
                       default-first-option
                       placeholder="请选择文章标签"
                     >
@@ -38,9 +38,21 @@
                         :key="item.id"
                         :label="item.name"
                         :value="item.id"
-                      />
+                      >
+                        <span style="float: left">{{ item.name }}</span>
+                        <span style="float: right; margin-right:15px;">
+                          <el-tag :type="item.type | statusFilter">
+                            {{ item.type | statusTextFilter }}
+                          </el-tag>
+                        </span>
+                      </el-option>
                     </el-select>
                   </el-form-item>
+                </el-col>
+                <el-col :span="2">
+                  <el-button type="primary" @click="createMeta">
+                    创建新标签
+                  </el-button>
                 </el-col>
               </el-row>
             </div>
@@ -53,6 +65,9 @@
 
       </div>
     </el-form>
+    <el-dialog :visible="dialog" title="新增" append-to-body @close="closeDialog">
+      <Meta v-if="dialog" :meta="metaData" :change="changeList" :close="closeDialog" />
+    </el-dialog>
   </div>
 </template>
 
@@ -63,6 +78,7 @@ import Sticky from '@/components/Sticky' // 粘性header组件
 import { fetchArticle } from '@/api/article'
 import { fetchList } from '@/api/metas'
 import { CommentDropdown } from './Dropdown'
+import Meta from '../../metas/meta'
 
 const defaultForm = {
   status: 'draft',
@@ -76,7 +92,23 @@ const defaultForm = {
 
 export default {
   name: 'ArticleDetail',
-  components: { Tinymce, MDinput, Sticky, CommentDropdown },
+  components: { Tinymce, MDinput, Sticky, CommentDropdown, Meta },
+  filters: {
+    statusFilter(status) {
+      const statusMap = {
+        category: 'success',
+        tag: 'primary'
+      }
+      return statusMap[status]
+    },
+    statusTextFilter(status) {
+      const statusMap = {
+        category: '分类',
+        tag: '标签'
+      }
+      return statusMap[status]
+    }
+  },
   props: {
     isEdit: {
       type: Boolean,
@@ -105,7 +137,9 @@ export default {
         content: [{ validator: validateRequire }]
       },
       tempRoute: {},
-      metaOptions: null // 标签、分类
+      metaOptions: null, // 标签、分类
+      dialog: false,
+      metaData: {}
     }
   },
   created() {
@@ -115,9 +149,7 @@ export default {
     } else {
       this.postForm = Object.assign({}, defaultForm)
     }
-    fetchList().then(res => {
-      this.metaOptions = res.data.items
-    })
+    this.initMetas()
     // Why need to make a copy of this.$route here?
     // Because if you enter this page and quickly switch tag, may be in the execution of the setTagsViewTitle function, this.$route is no longer pointing to the current page
     // https://github.com/PanJiaChen/vue-element-admin/issues/1221
@@ -132,6 +164,10 @@ export default {
       }).catch(err => {
         console.log(err)
       })
+    },
+    async initMetas() {
+      const res = await fetchList()
+      if (res) this.metaOptions = res.data.items
     },
     submitForm() {
       this.postForm.display_time = parseInt(this.display_time / 1000)
@@ -168,6 +204,24 @@ export default {
         duration: 1000
       })
       this.postForm.status = 'draft'
+    },
+    // 创建标签相关
+    createMeta() {
+      const defaultMeta = {
+        name: '',
+        type: 'tag',
+        textColor: '#ffffff',
+        color: '#409EFF'
+      }
+      this.dialog = true
+      this.metaData = defaultMeta
+      this.metaData.moudle = 'add'
+    },
+    closeDialog() {
+      this.dialog = false
+    },
+    changeList() {
+      this.initMetas()
     }
   }
 }

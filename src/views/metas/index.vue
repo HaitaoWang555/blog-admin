@@ -83,7 +83,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="Actions" width="180">
+      <el-table-column align="center" label="操作" width="180">
         <template slot-scope="scope">
           <el-button type="primary" icon="el-icon-edit" @click="edit(scope.row, scope.$index)">
             修改
@@ -96,7 +96,7 @@
       v-show="total>0"
       :total="total"
       :page.sync="listQuery.page"
-      :limit.sync="listQuery.limit"
+      :limit.sync="listQuery.pagesize"
       @pagination="getList"
     />
     <el-dialog :visible="dialog" :title="dialogTitle" append-to-body @close="closeDialog">
@@ -164,7 +164,7 @@ export default {
       total: 0,
       listQuery: {
         page: 1,
-        limit: 10
+        pagesize: 10
       },
       dialog: false,
       dialogTitle: '',
@@ -221,7 +221,11 @@ export default {
           break
       }
     },
-    search() {},
+    search() {
+      this.listQuery.name = this.searchValue
+      this.listQuery.type = this.selectValue
+      this.getList()
+    },
     edit(row, index) {
       const editMeta = row
 

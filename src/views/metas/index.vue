@@ -3,7 +3,7 @@
     <div class="filter-container">
       <el-input
         v-model="searchValue"
-        placeholder="可搜索名称/属性"
+        placeholder="可搜索名称"
         prefix-icon="el-icon-search"
         clearable
         style="width: 200px"
@@ -239,6 +239,7 @@ export default {
       this.dialog = false
     },
     changeList(data) {
+      if (this.changeIndex === 0) this.list.unshift(data)
       this.$set(this.list, this.changeIndex, data || null)
       this.changeIndex = 0
     }

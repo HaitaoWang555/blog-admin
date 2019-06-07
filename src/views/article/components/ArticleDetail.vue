@@ -3,10 +3,10 @@
     <el-form ref="postForm" :model="postForm" :rules="rules" class="form-container">
       <sticky :z-index="10" :class-name="'sub-navbar '+postForm.status">
         <CommentDropdown v-model="postForm.comment_disabled" />
-        <el-button v-loading="loading" style="margin-left: 10px;" type="success" @click="submitForm">
+        <el-button :loading="loading" style="margin-left: 10px;" type="success" @click="submitForm">
           发布
         </el-button>
-        <el-button v-loading="loading" type="warning" @click="draftForm">
+        <el-button :loading="loading" type="warning" @click="draftForm">
           草稿
         </el-button>
       </sticky>
@@ -26,23 +26,25 @@
                 <el-col :span="6">
                   <el-form-item label-width="80px" label="标签&分类" class="postInfo-container-item">
                     <el-select
-                      v-model="postForm.metaValue"
+                      v-model="metaValue"
+                      value-key="name"
                       multiple
                       collapse-tags
                       filterable
                       default-first-option
-                      placeholder="请选择文章标签"
+                      class="filter-item"
+                      placeholder="分类/标签"
                     >
                       <el-option
                         v-for="item in metaOptions"
                         :key="item.id"
                         :label="item.name"
-                        :value="item.id"
+                        :value="item"
                       >
                         <span style="float: left">{{ item.name }}</span>
                         <span style="float: right; margin-right:15px;">
-                          <el-tag :type="item.type | statusFilter">
-                            {{ item.type | statusTextFilter }}
+                          <el-tag :type="item.type | statusFilterMeta">
+                            {{ item.type | statusTextFilterMeta }}
                           </el-tag>
                         </span>
                       </el-option>
@@ -75,7 +77,7 @@
 import Tinymce from '@/components/Tinymce'
 import MDinput from '@/components/MDinput'
 import Sticky from '@/components/Sticky' // 粘性header组件
-import { fetchArticle } from '@/api/article'
+import { fetchArticle, createArticle, updateArticle } from '@/api/article'
 import { fetchList } from '@/api/metas'
 import { CommentDropdown } from './Dropdown'
 import Meta from '../../metas/meta'
@@ -84,8 +86,6 @@ const defaultForm = {
   status: 'draft',
   title: '', // 文章题目
   content: '', // 文章内容
-  image_uri: '', // 文章图片
-  display_time: undefined, // 前台展示时间
   id: undefined,
   comment_disabled: false
 }
@@ -94,14 +94,14 @@ export default {
   name: 'ArticleDetail',
   components: { Tinymce, MDinput, Sticky, CommentDropdown, Meta },
   filters: {
-    statusFilter(status) {
+    statusFilterMeta(status) {
       const statusMap = {
         category: 'success',
         tag: 'primary'
       }
       return statusMap[status]
     },
-    statusTextFilter(status) {
+    statusTextFilterMeta(status) {
       const statusMap = {
         category: '分类',
         tag: '标签'
@@ -132,11 +132,11 @@ export default {
       loading: false,
       userListOptions: [],
       rules: {
-        image_uri: [{ validator: validateRequire }],
         title: [{ validator: validateRequire }],
         content: [{ validator: validateRequire }]
       },
       tempRoute: {},
+      metaValue: null,
       metaOptions: null, // 标签、分类
       dialog: false,
       metaData: {}
@@ -148,8 +148,9 @@ export default {
       this.fetchData(id)
     } else {
       this.postForm = Object.assign({}, defaultForm)
+      this.initMetas()
     }
-    this.initMetas()
+
     // Why need to make a copy of this.$route here?
     // Because if you enter this page and quickly switch tag, may be in the execution of the setTagsViewTitle function, this.$route is no longer pointing to the current page
     // https://github.com/PanJiaChen/vue-element-admin/issues/1221
@@ -159,8 +160,8 @@ export default {
     fetchData(id) {
       fetchArticle(id).then(response => {
         this.postForm = response.data
-        // Just for test
-        this.postForm.title += `   Article Id:${this.postForm.id}`
+        this.postForm.comment_disabled = !this.postForm.allow_comment
+        this.initMetas()
       }).catch(err => {
         console.log(err)
       })
@@ -168,21 +169,21 @@ export default {
     async initMetas() {
       const res = await fetchList()
       if (res) this.metaOptions = res.data.items
+      if (this.isEdit) this.findMetaId()
     },
     submitForm() {
-      this.postForm.display_time = parseInt(this.display_time / 1000)
+      this.initMetaId()
+      this.postForm.allow_comment = !this.postForm.comment_disabled
       console.log(this.postForm)
       this.$refs.postForm.validate(valid => {
         if (valid) {
           this.loading = true
-          this.$notify({
-            title: '成功',
-            message: '发布文章成功',
-            type: 'success',
-            duration: 2000
-          })
-          this.postForm.status = 'published'
-          this.loading = false
+          this.postForm.status = 'publish'
+          if (!this.isEdit) {
+            this.createArticle()
+          } else {
+            this.updateArticle()
+          }
         } else {
           console.log('error submit!!')
           return false
@@ -197,13 +198,51 @@ export default {
         })
         return
       }
-      this.$message({
-        message: '保存成功',
-        type: 'success',
-        showClose: true,
-        duration: 1000
-      })
       this.postForm.status = 'draft'
+      this.initMetaId()
+      this.postForm.allow_comment = !this.postForm.comment_disabled
+      this.loading = true
+      if (!this.isEdit) {
+        this.createArticle()
+      } else {
+        this.updateArticle()
+      }
+    },
+    async createArticle() {
+      const res = await createArticle(this.postForm)
+      if (res) this.$tips(res)
+      this.loading = false
+    },
+    async updateArticle() {
+      const res = await updateArticle(this.postForm)
+      if (res) this.$tips(res)
+      this.loading = false
+    },
+    findMetaId() {
+      this.postForm.tags = this.postForm.tags ? this.postForm.tags : []
+      this.postForm.category = this.postForm.category ? this.postForm.category : []
+      const arr = this.postForm.tags.concat(this.postForm.category)
+
+      if (this.metaOptions) {
+        this.metaValue = this.metaOptions.filter(i => {
+          return arr.includes(i.name)
+        })
+      }
+    },
+    initMetaId() {
+      if (this.metaValue && this.metaValue.length > 0) {
+        this.postForm.tags = []
+        this.postForm.category = []
+        this.metaValue.map(i => {
+          if (i.type === 'tag') this.postForm.tags.push(i.name)
+          if (i.type === 'category') this.postForm.category.push(i.name)
+        })
+        this.postForm.tags = this.postForm.tags.join(',')
+        this.postForm.category = this.postForm.category.join(',')
+      } else {
+        this.postForm.tags = null
+        this.postForm.category = null
+      }
     },
     // 创建标签相关
     createMeta() {

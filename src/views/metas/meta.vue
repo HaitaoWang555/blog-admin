@@ -113,7 +113,7 @@ export default {
       this.$tips(res)
       this.loading = false
       this.close()
-      this.change(form)
+      this.change(res.data || form)
     },
     async edit(form) {
       const res = await updateMetas(form)
@@ -124,7 +124,7 @@ export default {
       this.$tips(res)
       this.loading = false
       this.close()
-      this.change(form)
+      this.change(res.data || form)
     }
   }
 }

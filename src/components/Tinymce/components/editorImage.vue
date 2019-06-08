@@ -7,13 +7,14 @@
       <el-upload
         :multiple="true"
         :file-list="fileList"
-        :show-file-list="true"
         :on-remove="handleRemove"
         :on-success="handleSuccess"
         :before-upload="beforeUpload"
+        :on-change="handleChange"
         class="editor-slide-upload"
-        action="https://httpbin.org/post"
+        action="xx"
         list-type="picture-card"
+        :http-request="handleUpload"
       >
         <el-button size="small" type="primary">
           点击上传
@@ -30,7 +31,7 @@
 </template>
 
 <script>
-// import { getToken } from 'api/qiniu'
+import { upload } from '@/api/public'
 
 export default {
   name: 'EditorSlideUpload',
@@ -43,59 +44,62 @@ export default {
   data() {
     return {
       dialogVisible: false,
-      listObj: {},
+      listArr: [],
+      unUpload: false, // 不符合后台格式判断,true: 没上传成功
       fileList: []
     }
   },
   methods: {
-    checkAllSuccess() {
-      return Object.keys(this.listObj).every(item => this.listObj[item].hasSuccess)
-    },
     handleSubmit() {
-      const arr = Object.keys(this.listObj).map(v => this.listObj[v])
-      if (!this.checkAllSuccess()) {
-        this.$message('请等待所有图片上传成功 或 出现了网络问题，请刷新页面重新上传！')
-        return
-      }
+      const arr = this.listArr.map(i => i.url)
       this.$emit('successCBK', arr)
-      this.listObj = {}
+      this.listArr = []
       this.fileList = []
       this.dialogVisible = false
     },
-    handleSuccess(response, file) {
-      const uid = file.uid
-      const objKeyArr = Object.keys(this.listObj)
-      for (let i = 0, len = objKeyArr.length; i < len; i++) {
-        if (this.listObj[objKeyArr[i]].uid === uid) {
-          this.listObj[objKeyArr[i]].url = response.files.file
-          this.listObj[objKeyArr[i]].hasSuccess = true
-          return
-        }
+    handleSuccess(response, uid) {
+      if (response && response.data) {
+        this.listArr.push({ url: response.data, uid })
       }
+    },
+    handleUpload(option) {
+      const formData = new FormData()
+
+      if (option.data) {
+        Object.keys(option.data).forEach(function(key) {
+          formData.append(key, option.data[key])
+        })
+      }
+      const uid = option.file.uid
+      formData.append(option.filename, option.file, option.file.name)
+      return upload(formData, option).then(res => {
+        if (!res) this.unUpload = true
+        this.handleSuccess(res, uid)
+      })
+    },
+    handleChange(file, fileList) {
+      if (this.unUpload && fileList) {
+        fileList.pop()
+      }
+      this.fileList = fileList
     },
     handleRemove(file) {
       const uid = file.uid
-      const objKeyArr = Object.keys(this.listObj)
-      for (let i = 0, len = objKeyArr.length; i < len; i++) {
-        if (this.listObj[objKeyArr[i]].uid === uid) {
-          delete this.listObj[objKeyArr[i]]
-          return
-        }
-      }
+      this.listArr = this.listArr.filter(i => i.uid !== uid)
     },
     beforeUpload(file) {
-      const _self = this
-      const _URL = window.URL || window.webkitURL
-      const fileName = file.uid
-      this.listObj[fileName] = {}
-      return new Promise((resolve, reject) => {
-        const img = new Image()
-        img.src = _URL.createObjectURL(file)
-        img.onload = function() {
-          _self.listObj[fileName] = { hasSuccess: false, uid: file.uid, width: this.width, height: this.height }
-        }
-        resolve(true)
-      })
+      this.unUpload = false
+      const type = ['image/jpeg', 'image/png']
+      const isJPG = type.includes(file.type)
+      const isLt2M = file.size / 1024 / 1024 < 2
+
+      if (!isJPG) {
+        this.$message.error('上传图片只能是 JPG 或 PNG 格式!')
+      }
+      if (!isLt2M) {
+        this.$message.error('上传图片大小不能超过 2MB!')
+      }
+      return isJPG && isLt2M
     }
   }
 }

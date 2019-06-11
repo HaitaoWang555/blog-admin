@@ -34,6 +34,7 @@
                       default-first-option
                       class="filter-item"
                       placeholder="分类/标签"
+                      @change="metasChange"
                     >
                       <el-option
                         v-for="item in metaOptions"
@@ -79,6 +80,7 @@ import MDinput from '@/components/MDinput'
 import Sticky from '@/components/Sticky' // 粘性header组件
 import { fetchArticle, createArticle, updateArticle } from '@/api/article'
 import { fetchList } from '@/api/metas'
+import { validStrLen } from '@/utils/validate'
 import { CommentDropdown } from './Dropdown'
 import Meta from '../../metas/meta'
 
@@ -116,14 +118,25 @@ export default {
     }
   },
   data() {
+    const validateObj = {
+      title: '文章标题',
+      content: '文章内容'
+    }
     const validateRequire = (rule, value, callback) => {
       if (value === '') {
         this.$message({
-          message: rule.field + '为必传项',
+          message: validateObj[rule.field] + '为必传项',
           type: 'error'
         })
-        callback(new Error(rule.field + '为必传项'))
+        callback(new Error(validateObj[rule.field] + '为必传项'))
       } else {
+        if (!validStrLen(value)) {
+          this.$message({
+            message: validateObj[rule.field] + '长度不能超过64',
+            type: 'error'
+          })
+          callback(new Error(validateObj[rule.field] + '长度不能超过64'))
+        }
         callback()
       }
     }
@@ -143,6 +156,7 @@ export default {
     }
   },
   created() {
+    console.log(validStrLen)
     if (this.isEdit) {
       const id = this.$route.params && this.$route.params.id
       this.fetchData(id)
@@ -171,7 +185,15 @@ export default {
       if (res) this.metaOptions = res.data.items
       if (this.isEdit) this.findMetaId()
     },
+    metasChange(val) {
+      const num = val.filter(i => i.type === 'category')
+      if (num.length > 1) {
+        this.$message({ message: '只能选择一个分类', type: 'error' })
+        return true
+      }
+    },
     submitForm() {
+      if (this.metasChange(this.metaValue)) return
       this.initMetaId()
       this.postForm.allow_comment = !this.postForm.comment_disabled
       console.log(this.postForm)
@@ -199,6 +221,7 @@ export default {
         return
       }
       this.postForm.status = 'draft'
+      if (this.metasChange(this.metaValue)) return
       this.initMetaId()
       this.postForm.allow_comment = !this.postForm.comment_disabled
       this.loading = true
@@ -210,12 +233,20 @@ export default {
     },
     async createArticle() {
       const res = await createArticle(this.postForm)
-      if (res) this.$tips(res)
+      if (res) {
+        this.$tips(res)
+      } else {
+        this.postForm.status = 'error'
+      }
       this.loading = false
     },
     async updateArticle() {
       const res = await updateArticle(this.postForm)
-      if (res) this.$tips(res)
+      if (res) {
+        this.$tips(res)
+      } else {
+        this.postForm.status = 'error'
+      }
       this.loading = false
     },
     findMetaId() {
@@ -281,6 +312,7 @@ export default {
       }
     }
   }
+
   .word-counter {
     width: 40px;
     position: absolute;

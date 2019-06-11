@@ -71,7 +71,8 @@ export default {
     return {
       formRules: {
         name: [
-          { required: true, message: '请输入名称', trigger: 'blur' }
+          { required: true, message: '请输入名称', trigger: 'blur' },
+          { max: 64, message: '长度必须小于64字符', trigger: 'blur' }
         ],
         type: [
           { type: 'string', required: true, message: '请选择类型', trigger: 'change' }

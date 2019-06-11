@@ -125,7 +125,9 @@ div:focus {
   &.draft {
     background: #d0d0d0;
   }
-
+  &.error {
+    background: #f56c6c;
+  }
   &.deleted {
     background: #d0d0d0;
   }

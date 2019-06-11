@@ -17,3 +17,12 @@ export function isExternal(path) {
 export function validUsername(str) {
   return true
 }
+
+/**
+ * 字符长度不超过64
+ * @param {string} str
+ * @returns {Boolean}
+ */
+export function validStrLen(str) {
+  return str.length < 65
+}

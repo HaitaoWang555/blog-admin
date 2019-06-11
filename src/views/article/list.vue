@@ -88,14 +88,12 @@
         </template>
       </el-table-column>
       <el-table-column min-width="120px" label="分类">
-        <template v-if="scope.row.category" slot-scope="scope">
+        <template slot-scope="scope">
           <el-tag
-            v-for="item in scope.row.category"
-            :key="item"
-            style="margin-right: 10px;"
+            class="metaTag"
             type="success"
           >
-            {{ item }}
+            {{ scope.row.category }}
           </el-tag>
         </template>
       </el-table-column>
@@ -104,7 +102,7 @@
           <el-tag
             v-for="item in scope.row.tags"
             :key="item"
-            style="margin-right: 10px;"
+            class="metaTag"
             type="primary"
           >
             {{ item }}
@@ -279,7 +277,7 @@ export default {
       }
     },
     add() {
-
+      this.$router.push('/article/create')
     },
     async del() {
       const ids = this.multipleSelection.map(i => i.id).join(',')
@@ -302,5 +300,10 @@ export default {
   position: absolute;
   right: 15px;
   top: 10px;
+}
+.metaTag {
+  width: 100%;
+  text-align: center;
+  margin: 5px 0;
 }
 </style>

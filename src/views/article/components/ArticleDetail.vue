@@ -181,7 +181,7 @@ export default {
       })
     },
     async initMetas() {
-      const res = await fetchList()
+      const res = await fetchList({ list: 'all' })
       if (res) this.metaOptions = res.data.items
       if (this.isEdit) this.findMetaId()
     },

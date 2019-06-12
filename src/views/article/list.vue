@@ -250,7 +250,7 @@ export default {
       })
     },
     getMetas() {
-      getMetas().then(res => {
+      getMetas({ list: 'all' }).then(res => {
         this.metaOptions = res.data.items
       })
     },

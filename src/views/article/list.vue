@@ -68,7 +68,17 @@
       </el-button>
     </div>
 
-    <el-table v-loading="listLoading" :data="list" border fit highlight-current-row style="width: 100%" @selection-change="handleSelectionChange">
+    <el-table
+      v-loading="listLoading"
+      :data="list"
+      height="calc(100vh - 230px)"
+      border
+      fit
+      highlight-current-row
+      style="width: 100%"
+      @sort-change="sortChange"
+      @selection-change="handleSelectionChange"
+    >
 
       <el-table-column type="selection" align="center" fixed />
 
@@ -109,12 +119,12 @@
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column width="180px" align="center" label="发布时间">
+      <el-table-column width="180px" align="center" sortable label="发布时间">
         <template slot-scope="scope">
           <span>{{ scope.row.created_at | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column width="180px" align="center" label="更新时间">
+      <el-table-column width="180px" align="center" sortable label="更新时间">
         <template slot-scope="scope">
           <span>{{ scope.row.updated_at | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
         </template>
@@ -230,8 +240,9 @@ export default {
       this.getList()
       this.getMetas()
     },
-    getList() {
+    getList(sortMsg) {
       this.listLoading = true
+      this.listQuery.sortBy = sortMsg || null
       fetchList(this.listQuery).then(response => {
         this.listLoading = false
         if (!response) return
@@ -287,6 +298,19 @@ export default {
       if (!res) return
       this.$tips(res)
       this.getList()
+    },
+    sortChange(column) { // 排序方法
+      if (!column.column) return
+      const columnName = column.column.label
+      const dir = {
+        '发布时间': 'created_at',
+        '更新时间': 'updated_at'
+      }
+      const columnVal = dir[columnName]
+      const order = column.order.includes('desc') ? 'desc' : 'asc'
+      const sortMsg = columnVal + ',' + order
+      this.sortMsg = sortMsg
+      this.getList(sortMsg)
     }
   }
 }

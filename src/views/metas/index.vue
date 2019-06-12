@@ -45,10 +45,12 @@
     <el-table
       v-loading="listLoading"
       :data="list"
+      height="calc(100vh - 230px)"
       border
       fit
       highlight-current-row
       style="width: 100%"
+      @sort-change="sortChange"
       @selection-change="handleSelectionChange"
     >
 
@@ -62,7 +64,9 @@
 
       <el-table-column align="center" width="100px" label="颜色">
         <template slot-scope="scope">
-          <span :style="{'color': scope.row.textColor}">{{ scope.row.textColor }}</span>
+          <span :style="{'color': scope.row.textColor }">
+            {{ scope.row.textColor }}
+          </span>
         </template>
       </el-table-column>
 
@@ -73,13 +77,22 @@
           </el-tag>
         </template>
       </el-table-column>
-
       <el-table-column min-width="200px" label="名称">
         <template slot-scope="scope">
-          <template v-if="scope.row.edit">
-            <el-input v-model="scope.row.name" class="edit-input" />
-          </template>
-          <span v-else>{{ scope.row.name }}</span>
+          <span :style="{'color': scope.row.textColor, 'background-color':scope.row.color }">
+            {{ scope.row.name }}
+          </span>
+        </template>
+      </el-table-column>
+
+      <el-table-column width="180px" align="center" sortable label="发布时间">
+        <template slot-scope="scope">
+          <span>{{ scope.row.created_at | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column width="180px" align="center" sortable label="更新时间">
+        <template slot-scope="scope">
+          <span>{{ scope.row.updated_at | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
         </template>
       </el-table-column>
 
@@ -176,8 +189,9 @@ export default {
     this.getList()
   },
   methods: {
-    async getList() {
+    async getList(sortMsg) {
       this.listLoading = true
+      this.listQuery.sortBy = sortMsg || null
       const res = await fetchList(this.listQuery)
       if (!res) {
         this.listLoading = false
@@ -239,9 +253,22 @@ export default {
       this.dialog = false
     },
     changeList(data) {
-      if (this.changeIndex === 0) this.list.unshift(data)
+      if (this.changeIndex === 0 && this.metaData.moudle === 'add') this.list.unshift(data)
       this.$set(this.list, this.changeIndex, data || null)
       this.changeIndex = 0
+    },
+    sortChange(column) { // 排序方法
+      if (!column.column) return
+      const columnName = column.column.label
+      const dir = {
+        '发布时间': 'created_at',
+        '更新时间': 'updated_at'
+      }
+      const columnVal = dir[columnName]
+      const order = column.order.includes('desc') ? 'desc' : 'asc'
+      const sortMsg = columnVal + ',' + order
+      this.sortMsg = sortMsg
+      this.getList(sortMsg)
     }
   }
 }

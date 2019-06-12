@@ -233,7 +233,6 @@ export default {
   },
   created() {
     this.init()
-    this.getList()
   },
   methods: {
     init() {

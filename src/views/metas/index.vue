@@ -189,7 +189,7 @@ export default {
     this.getList()
   },
   methods: {
-    async getList(sortMsg) {
+    async getList(query, sortMsg) {
       this.listLoading = true
       this.listQuery.sortBy = sortMsg || null
       const res = await fetchList(this.listQuery)
@@ -268,7 +268,7 @@ export default {
       const order = column.order.includes('desc') ? 'desc' : 'asc'
       const sortMsg = columnVal + ',' + order
       this.sortMsg = sortMsg
-      this.getList(sortMsg)
+      this.getList(null, sortMsg)
     }
   }
 }

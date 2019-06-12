@@ -130,7 +130,7 @@ export default {
         })
         callback(new Error(validateObj[rule.field] + '为必传项'))
       } else {
-        if (!validStrLen(value)) {
+        if (rule.field === 'title' && !validStrLen(value)) {
           this.$message({
             message: validateObj[rule.field] + '长度不能超过64',
             type: 'error'

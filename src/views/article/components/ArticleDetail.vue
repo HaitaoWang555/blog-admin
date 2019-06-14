@@ -63,7 +63,8 @@
         </el-row>
 
         <el-form-item prop="content" style="margin-bottom: 30px;">
-          <Tinymce ref="editor" v-model="postForm.content" :height="400" />
+          <!-- <Tinymce ref="editor" v-model="postForm.content" :height="400" /> -->
+          <markdown-editor v-model="postForm.content" height="380px" />
         </el-form-item>
 
       </div>
@@ -75,7 +76,7 @@
 </template>
 
 <script>
-import Tinymce from '@/components/Tinymce'
+import MarkdownEditor from '@/components/MarkdownEditor'
 import MDinput from '@/components/MDinput'
 import Sticky from '@/components/Sticky' // 粘性header组件
 import { fetchArticle, createArticle, updateArticle } from '@/api/article'
@@ -94,7 +95,7 @@ const defaultForm = {
 
 export default {
   name: 'ArticleDetail',
-  components: { Tinymce, MDinput, Sticky, CommentDropdown, Meta },
+  components: { MarkdownEditor, MDinput, Sticky, CommentDropdown, Meta },
   filters: {
     statusFilterMeta(status) {
       const statusMap = {
@@ -156,7 +157,6 @@ export default {
     }
   },
   created() {
-    console.log(validStrLen)
     if (this.isEdit) {
       const id = this.$route.params && this.$route.params.id
       this.fetchData(id)

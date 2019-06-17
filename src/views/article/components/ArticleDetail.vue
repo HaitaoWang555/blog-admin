@@ -75,7 +75,7 @@
 </template>
 
 <script>
-import MarkdownEditor from '@/components/MarkdownEditor'
+import MarkdownEditor from './MarkdownEditor'
 import MDinput from '@/components/MDinput'
 import Sticky from '@/components/Sticky' // 粘性header组件
 import { fetchArticle, createArticle, updateArticle } from '@/api/article'

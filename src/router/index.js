@@ -124,5 +124,5 @@ export function resetRouter() {
   const newRouter = createRouter()
   router.matcher = newRouter.matcher // reset router
 }
-
+export const asyncRoutes = []
 export default router

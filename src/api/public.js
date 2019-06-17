@@ -13,3 +13,10 @@ export function upload(list, option) {
     }
   })
 }
+export function uploadMd(list) {
+  return request({
+    url: '/upload',
+    method: 'post',
+    data: list
+  })
+}

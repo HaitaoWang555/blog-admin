@@ -7,10 +7,13 @@
 import 'codemirror/lib/codemirror.css' // codemirror
 import 'tui-editor/dist/tui-editor.css' // editor ui
 import 'tui-editor/dist/tui-editor-contents.css' // editor content
+import 'tui-editor/dist/tui-editor-extScrollSync'
 require('highlight.js/styles/github.css')
 
 import Editor from 'tui-editor'
 import defaultOptions from './default-options'
+
+import { uploadMd } from '@/api/public'
 
 export default {
   name: 'MarddownEditor',
@@ -58,6 +61,7 @@ export default {
       options.initialEditType = this.mode
       options.height = this.height
       options.language = this.language
+      options.hooks.addImageBlobHook = this.handleUpload
       return options
     }
   },
@@ -114,7 +118,36 @@ export default {
     },
     getHtml() {
       return this.editor.getHtml()
+    },
+    handleUpload(file, callback) {
+      if (!this.beforeUpload(file)) return
+      const data = new FormData()
+      data.append('image', file)
+      return uploadMd(data).then(res => {
+        callback(res.data, 'image')
+      })
+    },
+    beforeUpload(file) {
+      const type = ['image/jpeg', 'image/png']
+      const isJPG = type.includes(file.type)
+      const isLt2M = file.size / 1024 / 1024 < 2
+
+      if (!isJPG) {
+        this.$message.error('上传图片只能是 JPG 或 PNG 格式!')
+      }
+      if (!isLt2M) {
+        this.$message.error('上传图片大小不能超过 2MB!')
+      }
+      return isJPG && isLt2M
     }
   }
 }
 </script>
+<style>
+.tui-editor-defaultUI .te-tab button {
+  height: 32px;
+}
+.tui-editor-defaultUI .te-mode-switch-section {
+  height: 30px;
+}
+</style>

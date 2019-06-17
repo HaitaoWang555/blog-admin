@@ -1,11 +1,12 @@
 // doc: https://nhnent.github.io/tui.editor/api/latest/ToastUIEditor.html#ToastUIEditor
 export default {
   minHeight: '200px',
-  previewStyle: 'tab',
+  previewStyle: 'vertical',
   useCommandShortcut: true,
   useDefaultHTMLSanitizer: true,
   usageStatistics: false,
-  hideModeSwitch: true,
+  hideModeSwitch: false,
+  exts: ['scrollSync'],
   toolbarItems: [
     'heading',
     'bold',
@@ -18,8 +19,6 @@ export default {
     'ul',
     'ol',
     'task',
-    'indent',
-    'outdent',
     'divider',
     'table',
     'image',
@@ -27,5 +26,6 @@ export default {
     'divider',
     'code',
     'codeblock'
-  ]
+  ],
+  hooks: {}
 }

@@ -62,9 +62,8 @@
           </el-col>
         </el-row>
 
-        <el-form-item prop="content" style="margin-bottom: 30px;">
-          <!-- <Tinymce ref="editor" v-model="postForm.content" :height="400" /> -->
-          <markdown-editor v-model="postForm.content" height="380px" />
+        <el-form-item prop="content">
+          <markdown-editor v-model="postForm.content" height="calc(100vh - 320px)" />
         </el-form-item>
 
       </div>

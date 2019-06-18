@@ -1,4 +1,4 @@
-import { login, logout } from '@/api/user'
+import { login, logout, getUserInfo } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import { resetRouter } from '@/router'
 import { tips } from '@/utils/tips'
@@ -40,6 +40,7 @@ const actions = {
         commit('SET_AVATAR', icon)
         resolve()
       }).catch(error => {
+        console.log(error)
         reject(error)
       })
     })
@@ -48,13 +49,21 @@ const actions = {
   // get user info
   getInfo({ commit, state }) {
     return new Promise((resolve, reject) => {
-      const data = {
-        'roles': [
-          'admin'
-        ]
-      }
-      commit('SET_ROLES', data.roles)
-      resolve(data)
+      getUserInfo().then(res => {
+        const data = {
+          'roles': [
+            'admin'
+          ]
+        }
+        const { username, icon } = res.data
+        commit('SET_ROLES', data.roles)
+        commit('SET_NAME', username)
+        commit('SET_AVATAR', icon)
+        resolve(data)
+      }).catch(error => {
+        console.log(error)
+        reject(error)
+      })
     })
   },
 

@@ -20,6 +20,7 @@
     "normalize.css": "7.0.0",
     "nprogress": "0.2.0",
     "path-to-regexp": "2.4.0",
+    "screenfull": "^4.2.0",
     "store": "^2.0.12",
     "tui-editor": "^1.4.3",
     "vue": "2.6.10",

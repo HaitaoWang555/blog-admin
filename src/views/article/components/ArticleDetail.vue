@@ -63,7 +63,8 @@
         </el-row>
 
         <el-form-item prop="content">
-          <markdown-editor v-model="postForm.content" height="calc(100vh - 320px)" />
+          <Screenfull class="screenfull" screenfull-name="markdown-editor" />
+          <markdown-editor v-model="postForm.content" class="markdown-editor" height="calc(100vh - 320px)" />
         </el-form-item>
 
       </div>
@@ -77,6 +78,7 @@
 <script>
 import MarkdownEditor from './MarkdownEditor'
 import MDinput from '@/components/MDinput'
+import Screenfull from '@/components/Screenfull'
 import Sticky from '@/components/Sticky' // 粘性header组件
 import { fetchArticle, createArticle, updateArticle } from '@/api/article'
 import { fetchList } from '@/api/metas'
@@ -94,7 +96,7 @@ const defaultForm = {
 
 export default {
   name: 'ArticleDetail',
-  components: { MarkdownEditor, MDinput, Sticky, CommentDropdown, Meta },
+  components: { MarkdownEditor, MDinput, Sticky, CommentDropdown, Meta, Screenfull },
   filters: {
     statusFilterMeta(status) {
       const statusMap = {
@@ -311,12 +313,15 @@ export default {
       }
     }
   }
-
-  .word-counter {
-    width: 40px;
+  .screenfull {
     position: absolute;
-    right: -10px;
-    top: 0px;
+    right: 20px;
+    top: 0;
+    z-index: 100;
+  }
+  .markdown-editor {
+    position: relative;
+    background-color: white;
   }
 }
 </style>

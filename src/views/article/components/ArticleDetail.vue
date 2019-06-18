@@ -64,7 +64,12 @@
 
         <el-form-item prop="content">
           <Screenfull class="screenfull" screenfull-name="markdown-editor" />
-          <markdown-editor v-model="postForm.content" class="markdown-editor" height="calc(100vh - 320px)" />
+          <markdown-editor
+            ref="markdownEditor"
+            class="markdown-editor"
+            height="calc(100vh - 320px)"
+            :value="postForm.content"
+          />
         </el-form-item>
 
       </div>
@@ -193,11 +198,14 @@ export default {
         return true
       }
     },
+    getContent() {
+      return this.$refs.markdownEditor.getHtml()
+    },
     submitForm() {
       if (this.metasChange(this.metaValue)) return
       this.initMetaId()
+      this.postForm.content = this.getContent()
       this.postForm.allow_comment = !this.postForm.comment_disabled
-      console.log(this.postForm)
       this.$refs.postForm.validate(valid => {
         if (valid) {
           this.loading = true

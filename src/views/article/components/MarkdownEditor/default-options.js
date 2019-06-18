@@ -19,6 +19,8 @@ export default {
     'ul',
     'ol',
     'task',
+    'indent',
+    'outdent',
     'divider',
     'table',
     'image',

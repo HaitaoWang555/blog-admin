@@ -98,13 +98,13 @@ export default {
         console.log(this.value)
         this.setHtml(this.value)
       }
-      this.editor.on('change', () => {
-        this.$emit('input', this.editor.getHtml())
-      })
+      // this.editor.on('change', () => {
+      //   this.$emit('input', this.editor.getHtml())
+      // })
     },
     destroyEditor() {
       if (!this.editor) return
-      this.editor.off('change')
+      // this.editor.off('change')
       this.editor.remove()
     },
     setValue(value) {

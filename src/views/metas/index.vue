@@ -238,6 +238,7 @@ export default {
     search() {
       this.listQuery.name = this.searchValue
       this.listQuery.type = this.selectValue
+      this.listQuery.page = 1
       this.getList()
     },
     edit(row, index) {

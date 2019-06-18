@@ -268,6 +268,7 @@ export default {
         this.listQuery.tags = null
         this.listQuery.category = null
       }
+      this.listQuery.page = 1
       this.getList()
     },
     handleSelectionChange(val) {

@@ -204,7 +204,11 @@ export default {
     submitForm() {
       if (this.metasChange(this.metaValue)) return
       this.initMetaId()
-      this.postForm.content = this.getContent()
+      const newContent = this.getContent()
+      if (newContent !== this.postForm.content) {
+        this.postForm.content = this.getContent()
+        this.postForm.isUpdateContent = 1
+      }
       this.postForm.allow_comment = !this.postForm.comment_disabled
       this.$refs.postForm.validate(valid => {
         if (valid) {

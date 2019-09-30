@@ -36,8 +36,8 @@
         placeholder="分类/标签"
       >
         <el-option
-          v-for="item in metaOptions"
-          :key="item.id"
+          v-for="(item, index) in metaOptions"
+          :key="index"
           :label="item.name"
           :value="item"
         >
@@ -98,20 +98,22 @@
         </template>
       </el-table-column>
       <el-table-column min-width="120px" label="分类">
-        <template slot-scope="scope">
+        <template v-if="scope.row.category" slot-scope="scope">
           <el-tag
+            v-for="(item, index) in scope.row.category.split(',')"
+            :key="index"
             class="metaTag"
             type="success"
           >
-            {{ scope.row.category }}
+            {{ item }}
           </el-tag>
         </template>
       </el-table-column>
       <el-table-column min-width="120px" label="标签">
         <template v-if="scope.row.tags" slot-scope="scope">
           <el-tag
-            v-for="item in scope.row.tags"
-            :key="item"
+            v-for="(item, index) in scope.row.tags.split(',')"
+            :key="index"
             class="metaTag"
             type="primary"
           >
@@ -121,12 +123,12 @@
       </el-table-column>
       <el-table-column width="180px" align="center" sortable label="发布时间">
         <template slot-scope="scope">
-          <span>{{ scope.row.created_at | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+          <span>{{ scope.row.createdAt | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
         </template>
       </el-table-column>
       <el-table-column width="180px" align="center" sortable label="更新时间">
         <template slot-scope="scope">
-          <span>{{ scope.row.updated_at | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+          <span>{{ scope.row.updatedAt | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
         </template>
       </el-table-column>
       <el-table-column align="center" label="操作" width="120">
@@ -256,17 +258,12 @@ export default {
     },
     search() {
       if (this.metaValue && this.metaValue.length > 0) {
-        this.listQuery.tags = []
-        this.listQuery.category = []
-        this.metaValue.map(i => {
-          if (i.type === 'tag') this.listQuery.tags.push(i.name)
-          if (i.type === 'category') this.listQuery.category.push(i.name)
+        this.listQuery.meta = this.metaValue.map(i => {
+          return i.id
         })
-        this.listQuery.tags = this.listQuery.tags.join(',')
-        this.listQuery.category = this.listQuery.category.join(',')
+        this.listQuery.meta = this.listQuery.meta.join(',')
       } else {
-        this.listQuery.tags = null
-        this.listQuery.category = null
+        this.listQuery.meta = null
       }
       this.listQuery.page = 1
       this.getList()

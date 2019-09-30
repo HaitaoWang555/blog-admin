@@ -34,7 +34,6 @@
                       default-first-option
                       class="filter-item"
                       placeholder="分类/标签"
-                      @change="metasChange"
                     >
                       <el-option
                         v-for="item in metaOptions"
@@ -191,18 +190,10 @@ export default {
       if (res) this.metaOptions = res.data.items
       if (this.isEdit) this.findMetaId()
     },
-    metasChange(val) {
-      const num = val.filter(i => i.type === 'category')
-      if (num.length > 1) {
-        this.$message({ message: '只能选择一个分类', type: 'error' })
-        return true
-      }
-    },
     getContent() {
       return this.$refs.markdownEditor.getHtml()
     },
     submitForm() {
-      if (this.metasChange(this.metaValue)) return
       this.initMetaId()
       const newContent = this.getContent()
       if (newContent !== this.postForm.content) {
@@ -226,6 +217,7 @@ export default {
       })
     },
     draftForm() {
+      this.postForm.content = this.getContent()
       if (this.postForm.content.length === 0 || this.postForm.title.length === 0) {
         this.$message({
           message: '请填写必要的标题和内容',
@@ -234,7 +226,6 @@ export default {
         return
       }
       this.postForm.status = 'draft'
-      if (this.metasChange(this.metaValue)) return
       this.initMetaId()
       this.postForm.allow_comment = !this.postForm.comment_disabled
       this.loading = true

@@ -10,7 +10,7 @@ export function fetchList(query) {
 
 export function fetchArticle(id) {
   return request({
-    url: '/article/getOne',
+    url: '/article/list',
     method: 'get',
     params: { id }
   })
@@ -18,7 +18,7 @@ export function fetchArticle(id) {
 
 export function createArticle(data) {
   return request({
-    url: '/article/addone',
+    url: '/article/add',
     method: 'post',
     data
   })

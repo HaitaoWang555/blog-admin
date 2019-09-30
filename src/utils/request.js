@@ -2,6 +2,7 @@ import axios from 'axios'
 import { MessageBox, Message } from 'element-ui'
 import store from '@/store'
 import { getToken } from '@/utils/auth'
+const qs = require('qs')
 
 // create an axios instance
 const service = axios.create({
@@ -9,7 +10,7 @@ const service = axios.create({
   withCredentials: true, // send cookies when cross-domain requests
   timeout: 5000 // request timeout
 })
-
+service.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
 // request interceptor
 service.interceptors.request.use(
   config => {
@@ -19,6 +20,9 @@ service.interceptors.request.use(
       // let each request carry token --['X-Token'] as a custom key.
       // please modify it according to the actual situation.
       config.headers['X-Token'] = getToken()
+    }
+    if (config.method === 'post') {
+      config.data = qs.stringify(config.data)
     }
     return config
   },
@@ -44,15 +48,15 @@ service.interceptors.response.use(
   response => {
     const res = response.data
     // if the custom code is not 20000, it is judged as an error.
-    if (res.statusCode !== 0) {
+    if (!res.success) {
       Message({
-        message: res.message || 'error',
+        message: res.msg || 'error',
         type: 'error',
         duration: 5 * 1000
       })
 
-      // 10: Illegal token; 50012: Other clients logged in; 50014: Token expired;
-      if (res.statusCode === 10 || res.statusCode === 50012 || res.statusCode === 50014) {
+      // 999: 用户未登录
+      if (res.code === 999) {
         // to re-login
         MessageBox.confirm('You have been logged out, you can cancel to stay on this page, or log in again', 'Confirm logout', {
           confirmButtonText: 'Re-Login',
@@ -71,8 +75,9 @@ service.interceptors.response.use(
   },
   error => {
     console.log('err' + error) // for debug
+    const message = error.response.data.msg
     Message({
-      message: error.message,
+      message,
       type: 'error',
       duration: 5 * 1000
     })

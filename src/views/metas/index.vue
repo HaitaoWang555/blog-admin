@@ -58,13 +58,13 @@
 
       <el-table-column width="100px" align="center" label="背景色">
         <template slot-scope="scope">
-          <span :style="{'color': scope.row.color}">{{ scope.row.color }}</span>
+          <span>{{ scope.row.color }}</span>
         </template>
       </el-table-column>
 
       <el-table-column align="center" width="100px" label="颜色">
         <template slot-scope="scope">
-          <span :style="{'color': scope.row.textColor }">
+          <span>
             {{ scope.row.textColor }}
           </span>
         </template>
@@ -79,7 +79,7 @@
       </el-table-column>
       <el-table-column min-width="200px" label="名称">
         <template slot-scope="scope">
-          <span :style="{'color': scope.row.textColor, 'background-color':scope.row.color }">
+          <span>
             {{ scope.row.name }}
           </span>
         </template>
@@ -87,12 +87,12 @@
 
       <el-table-column width="180px" align="center" sortable label="发布时间">
         <template slot-scope="scope">
-          <span>{{ scope.row.created_at | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+          <span>{{ scope.row.createdAt | parseTime() }}</span>
         </template>
       </el-table-column>
       <el-table-column width="180px" align="center" sortable label="更新时间">
         <template slot-scope="scope">
-          <span>{{ scope.row.updated_at | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+          <span>{{ scope.row.updatedAt | parseTime() }}</span>
         </template>
       </el-table-column>
 
@@ -267,7 +267,7 @@ export default {
       }
       const columnVal = dir[columnName]
       const order = column.order.includes('desc') ? 'desc' : 'asc'
-      const sortMsg = columnVal + ',' + order
+      const sortMsg = columnVal + ' ' + order
       this.sortMsg = sortMsg
       this.getList(null, sortMsg)
     }

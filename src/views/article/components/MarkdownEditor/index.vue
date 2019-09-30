@@ -122,9 +122,10 @@ export default {
     handleUpload(file, callback) {
       if (!this.beforeUpload(file)) return
       const data = new FormData()
-      data.append('image', file)
+      data.append('file', file)
       return uploadMd(data).then(res => {
-        callback(res.data, 'image')
+        // TODO
+        callback('//' + res.data, 'image')
       })
     },
     beforeUpload(file) {

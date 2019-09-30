@@ -1,4 +1,4 @@
-import request from '@/utils/request'
+import request from '@/utils/publicRequest'
 
 export function upload(list, option) {
   return request({
@@ -15,7 +15,7 @@ export function upload(list, option) {
 }
 export function uploadMd(list) {
   return request({
-    url: '/upload',
+    url: '/upload/local',
     method: 'post',
     data: list
   })

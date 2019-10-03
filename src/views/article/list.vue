@@ -305,7 +305,7 @@ export default {
       }
       const columnVal = dir[columnName]
       const order = column.order.includes('desc') ? 'desc' : 'asc'
-      const sortMsg = columnVal + ',' + order
+      const sortMsg = columnVal + ' ' + order
       this.sortMsg = sortMsg
       this.getList(sortMsg)
     }

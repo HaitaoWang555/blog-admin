@@ -32,10 +32,10 @@ export function updateArticle(data) {
   })
 }
 
-export function delArticles(id) {
+export function delArticles(ids) {
   return request({
     url: '/article/delete',
     method: 'delete',
-    params: { id }
+    params: { ids }
   })
 }

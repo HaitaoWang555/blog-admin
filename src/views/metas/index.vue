@@ -109,7 +109,7 @@
       v-show="total>0"
       :total="total"
       :page.sync="listQuery.page"
-      :limit.sync="listQuery.pagesize"
+      :limit.sync="listQuery.pageSize"
       @pagination="getList"
     />
     <el-dialog :visible="dialog" :title="dialogTitle" append-to-body @close="closeDialog">
@@ -177,7 +177,7 @@ export default {
       total: 0,
       listQuery: {
         page: 1,
-        pagesize: 10
+        pageSize: 10
       },
       dialog: false,
       dialogTitle: '',
@@ -189,9 +189,9 @@ export default {
     this.getList()
   },
   methods: {
-    async getList(query, sortMsg) {
+    async getList(query, sortBy) {
       this.listLoading = true
-      this.listQuery.sortBy = sortMsg || null
+      this.listQuery.sortBy = sortBy || null
       const res = await fetchList(this.listQuery)
       if (!res) {
         this.listLoading = false
@@ -267,9 +267,9 @@ export default {
       }
       const columnVal = dir[columnName]
       const order = column.order.includes('desc') ? 'desc' : 'asc'
-      const sortMsg = columnVal + ' ' + order
-      this.sortMsg = sortMsg
-      this.getList(null, sortMsg)
+      const sortBy = columnVal + ' ' + order
+      this.sortBy = sortBy
+      this.getList(null, sortBy)
     }
   }
 }

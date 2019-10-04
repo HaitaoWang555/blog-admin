@@ -142,7 +142,7 @@
       </el-table-column>
     </el-table>
 
-    <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.pagesize" @pagination="getList" />
+    <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.pageSize" @pagination="getList" />
   </div>
 </template>
 
@@ -227,9 +227,10 @@ export default {
       metaValue: null,
       listQuery: {
         page: 1,
-        pagesize: 20,
+        pageSize: 20,
         title: null,
-        status: null
+        status: null,
+        sortBy: null
       }
     }
   },
@@ -241,9 +242,8 @@ export default {
       this.getList()
       this.getMetas()
     },
-    getList(sortMsg) {
+    getList() {
       this.listLoading = true
-      this.listQuery.sortBy = sortMsg || null
       fetchList(this.listQuery).then(response => {
         this.listLoading = false
         if (!response) return
@@ -289,7 +289,6 @@ export default {
     },
     async del() {
       const ids = this.multipleSelection.map(i => i.id).join(',')
-      debugger
       if (!ids) return
       const res = await delArticles(ids)
       if (!res) return
@@ -305,9 +304,9 @@ export default {
       }
       const columnVal = dir[columnName]
       const order = column.order.includes('desc') ? 'desc' : 'asc'
-      const sortMsg = columnVal + ' ' + order
-      this.sortMsg = sortMsg
-      this.getList(sortMsg)
+      const sortBy = columnVal + ' ' + order
+      this.listQuery.sortBy = sortBy
+      this.getList()
     }
   }
 }

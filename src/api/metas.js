@@ -10,7 +10,7 @@ export function fetchList(query) {
 
 export function createMetas(data) {
   return request({
-    url: '/metas/addone',
+    url: '/metas/add',
     method: 'post',
     data
   })

@@ -12,7 +12,7 @@ import App from './App'
 import store from './store'
 import router from './router'
 import { tips } from '@/utils/tips'
-
+// import { directive } from 'namedavatar/src/vue'
 import '@/icons' // icon
 import '@/permission' // permission control
 
@@ -23,7 +23,7 @@ Object.keys(filters).forEach(key => {
 })
 
 Vue.use(ElementUI, { locale, size: 'small', zIndex: 3000 })
-
+// Vue.directive('avatar', directive)
 Vue.prototype.$tips = tips
 
 Vue.config.productionTip = false

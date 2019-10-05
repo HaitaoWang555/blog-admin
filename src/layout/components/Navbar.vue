@@ -11,7 +11,8 @@
 
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
-          <img :src="avatar" class="user-avatar">
+          <el-avatar v-if="avatar" :src="avatar" class="user-avatar" />
+          <el-avatar v-else class="user-avatar">{{ name }}</el-avatar>
           <i class="el-icon-caret-bottom" />
         </div>
         <el-dropdown-menu slot="dropdown" class="user-dropdown">
@@ -45,6 +46,7 @@ export default {
   computed: {
     ...mapGetters([
       'sidebar',
+      'name',
       'avatar'
     ])
   },
@@ -125,7 +127,6 @@ export default {
           cursor: pointer;
           width: 40px;
           height: 40px;
-          border-radius: 10px;
         }
 
         .el-icon-caret-bottom {

@@ -24,10 +24,10 @@ export function updateMetas(data) {
   })
 }
 
-export function delMetas(id) {
+export function delMetas(ids) {
   return request({
     url: '/metas/delete',
     method: 'delete',
-    params: { id }
+    params: { ids }
   })
 }

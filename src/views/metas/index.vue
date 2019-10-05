@@ -156,6 +156,21 @@ export default {
           color: '#3399ff'
         },
         {
+          label: '批量导入',
+          value: 'import',
+          color: '#33b66a'
+        },
+        {
+          label: '导出',
+          value: 'export',
+          color: '#337df6'
+        },
+        {
+          label: '下载模板',
+          value: 'download',
+          color: '#337af2'
+        },
+        {
           label: '批量删除',
           value: 'del',
           color: '#ff7a7b'
@@ -171,7 +186,7 @@ export default {
           value: 'category'
         }
       ],
-      multipleSelection: null,
+      multipleSelection: [],
       list: null,
       listLoading: true,
       total: 0,
@@ -211,7 +226,8 @@ export default {
         name: '',
         type: 'tag',
         textColor: '#ffffff',
-        color: '#409EFF'
+        color: '#409EFF',
+        excel: null
       }
       switch (val) {
         case 'add':
@@ -220,7 +236,19 @@ export default {
           this.metaData = defaultMeta
           this.metaData.moudle = 'add'
           break
-
+        case 'import':
+          this.dialog = true
+          this.dialogTitle = '批量导入'
+          this.metaData = defaultMeta
+          this.metaData.moudle = 'import'
+          this.metaData.excel = null
+          break
+        case 'export':
+          this.export()
+          break
+        case 'download':
+          this.download()
+          break
         case 'del':
           (async() => {
             const ids = this.multipleSelection.map(i => i.id).join(',')
@@ -254,6 +282,10 @@ export default {
       this.dialog = false
     },
     changeList(data) {
+      if (this.metaData.moudle === 'import') {
+        this.getList()
+        return
+      }
       if (this.changeIndex === 0 && this.metaData.moudle === 'add') this.list.unshift(data)
       this.$set(this.list, this.changeIndex, data || null)
       this.changeIndex = 0
@@ -270,6 +302,15 @@ export default {
       const sortBy = columnVal + ' ' + order
       this.sortBy = sortBy
       this.getList(null, sortBy)
+    },
+    export() {
+      const ids = this.multipleSelection.map(i => i.id).join(',')
+      const url = '/api/manage/download/meta' + '?ids=' + ids
+      window.open(url)
+    },
+    download() {
+      const url = '/api/manage/download/metaTemplate'
+      window.open(url)
     }
   }
 }

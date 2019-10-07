@@ -176,10 +176,14 @@ export default {
       }
     },
     handleSuccess(res, file) {
-      this.$tips(res)
       this.loading = false
-      this.close()
-      this.change()
+      if (res.success) {
+        this.$tips(res)
+        this.close()
+        this.change()
+      } else {
+        this.$tips(res)
+      }
     }
   }
 }

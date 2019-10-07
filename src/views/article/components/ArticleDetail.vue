@@ -23,7 +23,7 @@
 
             <div class="postInfo-container">
               <el-row>
-                <el-col :span="6">
+                <el-col :span="4">
                   <el-form-item label-width="80px" label="标签&分类" class="postInfo-container-item">
                     <el-select
                       v-model="metaValue"
@@ -51,9 +51,14 @@
                     </el-select>
                   </el-form-item>
                 </el-col>
-                <el-col :span="2">
+                <el-col :span="2" class="text-center">
                   <el-button type="primary" @click="createMeta">
                     创建新标签
+                  </el-button>
+                </el-col>
+                <el-col :span="2" class="text-center">
+                  <el-button type="primary" @click="upload">
+                    上传文章
                   </el-button>
                 </el-col>
               </el-row>
@@ -74,7 +79,8 @@
       </div>
     </el-form>
     <el-dialog :visible="dialog" title="新增" append-to-body @close="closeDialog">
-      <Meta v-if="dialog" :meta="metaData" :change="changeList" :close="closeDialog" />
+      <Meta v-if="dialog && dialogMeta" :meta="metaData" :change="changeList" :close="closeDialog" />
+      <Upload v-if="dialog && dialogUpload" :article="uploadData" :change="completeUpload" :close="closeDialog" />
     </el-dialog>
   </div>
 </template>
@@ -89,6 +95,7 @@ import { fetchList } from '@/api/metas'
 import { validStrLen } from '@/utils/validate'
 import { CommentDropdown } from './Dropdown'
 import Meta from '../../metas/meta'
+import Upload from './MarkdownEditor/upload'
 
 const defaultForm = {
   status: 'draft',
@@ -100,7 +107,7 @@ const defaultForm = {
 
 export default {
   name: 'ArticleDetail',
-  components: { MarkdownEditor, MDinput, Sticky, CommentDropdown, Meta, Screenfull },
+  components: { MarkdownEditor, MDinput, Sticky, CommentDropdown, Meta, Upload, Screenfull },
   filters: {
     statusFilterMeta(status) {
       const statusMap = {
@@ -158,7 +165,10 @@ export default {
       metaValue: null,
       metaOptions: null, // 标签、分类
       dialog: false,
-      metaData: {}
+      dialogMeta: false,
+      dialogUpload: false,
+      metaData: {},
+      uploadData: {}
     }
   },
   created() {
@@ -288,14 +298,30 @@ export default {
         color: '#409EFF'
       }
       this.dialog = true
+      this.dialogMeta = true
       this.metaData = defaultMeta
       this.metaData.moudle = 'add'
     },
     closeDialog() {
       this.dialog = false
+      this.dialogMeta = false
+      this.dialogUpload = false
     },
     changeList() {
       this.initMetas()
+    },
+    // 上传文章
+    upload() {
+      const defaultMeta = {
+        file: null
+      }
+      this.dialog = true
+      this.dialogUpload = true
+      this.uploadData = defaultMeta
+    },
+    completeUpload(res) {
+      const html = res.data
+      this.postForm.content = html
     }
   }
 }

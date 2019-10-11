@@ -7,8 +7,7 @@ const qs = require('qs')
 // create an axios instance
 const service = axios.create({
   baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
-  withCredentials: true, // send cookies when cross-domain requests
-  timeout: 5000 // request timeout
+  withCredentials: true // send cookies when cross-domain requests
 })
 service.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
 // request interceptor

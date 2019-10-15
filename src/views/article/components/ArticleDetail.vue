@@ -320,8 +320,8 @@ export default {
       this.uploadData = defaultMeta
     },
     completeUpload(res) {
-      const html = res.data
-      this.postForm.content = html
+      const md = res.data
+      this.$refs.markdownEditor.setValue(md)
     }
   }
 }

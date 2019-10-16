@@ -42,6 +42,14 @@ module.exports = {
         pathRewrite: {
           '^/api': '/api'
         }
+      },
+      '/upload': {
+        target: process.env.proxy_target,
+        ws: true,
+        changeOrigin: true,
+        pathRewrite: {
+          '^/upload': '/upload'
+        }
       }
     }
   },

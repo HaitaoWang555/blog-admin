@@ -2,7 +2,7 @@ import request from '@/utils/publicRequest'
 
 export function upload(list, option) {
   return request({
-    url: '/upload',
+    url: '/upload/local',
     method: 'post',
     data: list,
     onUploadProgress: e => {

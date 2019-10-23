@@ -15,7 +15,7 @@
         <el-row>
 
           <el-col :span="24">
-            <el-form-item style="margin-bottom: 40px;" prop="title">
+            <el-form-item style="margin-bottom: 25px;" prop="title">
               <MDinput v-model="postForm.title" :maxlength="100" name="name" required>
                 标题
               </MDinput>
@@ -61,17 +61,32 @@
                     上传文章
                   </el-button>
                 </el-col>
+                <el-col :span="4" class="text-center">
+                  <el-select v-model="editorModel" placeholder="请选择" @change="changeEditorModel">
+                    <el-option label="MarkDown编辑器" value="markdownEditor" />
+                    <el-option label="富文本编辑器" value="tinymceEditor" />
+                  </el-select>
+                </el-col>
               </el-row>
             </div>
           </el-col>
         </el-row>
 
         <el-form-item prop="content">
-          <Screenfull class="screenfull" screenfull-name="markdown-editor" />
-          <markdown-editor
+          <template v-if="editorModel === 'markdownEditor'">
+            <Screenfull class="screenfull" screenfull-name="markdown-editor" />
+            <markdown-editor
+              ref="markdownEditor"
+              class="markdown-editor"
+              height="calc(100vh - 260px)"
+              :value="postForm.content"
+            />
+          </template>
+          <Tinymce
+            v-else
             ref="markdownEditor"
             class="markdown-editor"
-            height="calc(100vh - 320px)"
+            height="calc(100vh - 400px)"
             :value="postForm.content"
           />
         </el-form-item>
@@ -80,13 +95,20 @@
     </el-form>
     <el-dialog :visible="dialog" title="新增" append-to-body @close="closeDialog">
       <Meta v-if="dialog && dialogMeta" :meta="metaData" :change="changeList" :close="closeDialog" />
-      <Upload v-if="dialog && dialogUpload" :article="uploadData" :change="completeUpload" :close="closeDialog" />
+      <Upload
+        v-if="dialog && dialogUpload"
+        :editor-model="editorModel"
+        :article="uploadData"
+        :change="completeUpload"
+        :close="closeDialog"
+      />
     </el-dialog>
   </div>
 </template>
 
 <script>
 import MarkdownEditor from './MarkdownEditor'
+import Tinymce from './Tinymce'
 import MDinput from '@/components/MDinput'
 import Screenfull from '@/components/Screenfull'
 import Sticky from '@/components/Sticky' // 粘性header组件
@@ -95,7 +117,8 @@ import { fetchList } from '@/api/metas'
 import { validStrLen } from '@/utils/validate'
 import { CommentDropdown } from './Dropdown'
 import Meta from '../../metas/meta'
-import Upload from './MarkdownEditor/upload'
+import Upload from './upload'
+import { getSetting, setSetting } from '@/utils/auth'
 
 const defaultForm = {
   status: 'draft',
@@ -107,7 +130,7 @@ const defaultForm = {
 
 export default {
   name: 'ArticleDetail',
-  components: { MarkdownEditor, MDinput, Sticky, CommentDropdown, Meta, Upload, Screenfull },
+  components: { MarkdownEditor, MDinput, Sticky, CommentDropdown, Meta, Upload, Screenfull, Tinymce },
   filters: {
     statusFilterMeta(status) {
       const statusMap = {
@@ -168,10 +191,12 @@ export default {
       dialogMeta: false,
       dialogUpload: false,
       metaData: {},
-      uploadData: {}
+      uploadData: {},
+      editorModel: 'markdownEditor'
     }
   },
   created() {
+    this.editorModel = getSetting() || 'markdownEditor'
     if (this.isEdit) {
       const id = this.$route.params && this.$route.params.id
       this.fetchData(id)
@@ -320,8 +345,11 @@ export default {
       this.uploadData = defaultMeta
     },
     completeUpload(res) {
-      const md = res.data
-      this.$refs.markdownEditor.setValue(md)
+      const value = res.data
+      this.$refs.markdownEditor.setValue(value)
+    },
+    changeEditorModel(val) {
+      setSetting(val)
     }
   }
 }
@@ -332,7 +360,7 @@ export default {
 .createPost-container {
   position: relative;
   .createPost-main-container {
-    padding: 40px 45px 20px 50px;
+    padding: 10px 45px;
     .postInfo-container {
       position: relative;
       @include clearfix;

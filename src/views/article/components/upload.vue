@@ -23,7 +23,8 @@
         >
           <i class="el-icon-upload" />
           <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
-          <div slot="tip" class="el-upload__tip">文件不能超过10M</div>
+          <div slot="tip" class="el-upload__tip">文件不能超过2M</div>
+          <div slot="tip" class="el-upload__tip">{{ text }}</div>
         </el-upload>
       </el-form-item>
       <el-form-item label-width="0" style="text-align: center">
@@ -55,6 +56,10 @@ export default {
     change: {
       type: Function,
       default: null
+    },
+    editorModel: {
+      type: String,
+      default: 'markdownEditor'
     }
   },
   data() {
@@ -65,6 +70,11 @@ export default {
         ]
       },
       loading: false
+    }
+  },
+  computed: {
+    text() {
+      return this.editorModel === 'markdownEditor' ? '仅支持Markdown格式' : '支持.doc .doxc格式文件'
     }
   },
   methods: {

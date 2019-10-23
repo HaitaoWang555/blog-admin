@@ -15,10 +15,10 @@
         <el-upload
           ref="upload"
           drag
-          :on-success="handleSuccess"
           :on-change="handleChange"
           :auto-upload="false"
-          action="/api/manage/article/upload"
+          action="xx"
+          :http-request="handleUpload"
           multiple
         >
           <i class="el-icon-upload" />
@@ -40,6 +40,8 @@
 </template>
 
 <script>
+import { uploadArticle } from '@/api/public'
+
 export default {
   name: 'Article',
   props: {
@@ -95,6 +97,20 @@ export default {
     import() {
       this.$refs.upload.submit()
     },
+    handleUpload(option) {
+      const formData = new FormData()
+      if (option.data) {
+        Object.keys(option.data).forEach(function(key) {
+          formData.append(key, option.data[key])
+        })
+      }
+      formData.append(option.filename, option.file, option.file.name)
+      return uploadArticle(formData, option).then(res => {
+        this.loading = false
+        if (!res) return
+        this.handleSuccess(res)
+      })
+    },
     handleChange(file, fileList) {
       if (file) {
         if (file.status === 'ready') {
@@ -108,8 +124,7 @@ export default {
         }
       }
     },
-    handleSuccess(res, file) {
-      this.loading = false
+    handleSuccess(res) {
       if (res.success) {
         this.$tips(res)
         this.close()

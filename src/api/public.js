@@ -20,3 +20,17 @@ export function uploadMd(list) {
     data: list
   })
 }
+
+export function uploadArticle(list, option) {
+  return request({
+    url: '/article/upload',
+    method: 'post',
+    data: list,
+    onUploadProgress: e => {
+      if (e.total > 0) {
+        e.percent = e.loaded / e.total * 100
+      }
+      option.onProgress(e)
+    }
+  })
+}

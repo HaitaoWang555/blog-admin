@@ -229,7 +229,7 @@ export default {
 
   // Mixins:
   @mixin slided-top() {
-    top: - ($font-size-base + $spacer);
+    top: - ($font-size-base);
     left: 0;
     font-size: $font-size-base;
     font-weight: $font-weight-bold;

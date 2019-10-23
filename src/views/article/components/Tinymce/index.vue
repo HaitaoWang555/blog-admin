@@ -58,7 +58,6 @@ export default {
   },
   data() {
     return {
-      hasChange: false,
       tinymceId: this.id,
       fullscreen: false,
       languageTypeList: {
@@ -76,6 +75,14 @@ export default {
         return `${width}px`
       }
       return width
+    }
+  },
+  watch: {
+    value(val) {
+      if (val) {
+        this.$nextTick(() =>
+          window.tinymce.get(this.tinymceId).setContent(val || ''))
+      }
     }
   },
   mounted() {

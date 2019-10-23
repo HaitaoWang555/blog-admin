@@ -95,7 +95,6 @@ export default {
         ...this.editorOptions
       })
       if (this.value) {
-        console.log(this.value)
         this.setHtml(this.value)
       }
       // this.editor.on('change', () => {

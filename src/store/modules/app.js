@@ -2,7 +2,7 @@ import store from 'store'
 
 const state = {
   sidebar: {
-    opened: store.get('sidebarStatus') ? !!+store.get('sidebarStatus') : true,
+    opened: !store.get('sidebarStatus'),
     withoutAnimation: false
   },
   device: 'desktop'
@@ -13,13 +13,13 @@ const mutations = {
     state.sidebar.opened = !state.sidebar.opened
     state.sidebar.withoutAnimation = false
     if (state.sidebar.opened) {
-      store.set('sidebarStatus', 1)
+      store.set('sidebarStatus', 0) // 开启
     } else {
-      store.set('sidebarStatus', 0)
+      store.set('sidebarStatus', 1) // 闭合
     }
   },
   CLOSE_SIDEBAR: (state, withoutAnimation) => {
-    store.set('sidebarStatus', 0)
+    store.set('sidebarStatus', 1) // 闭合
     state.sidebar.opened = false
     state.sidebar.withoutAnimation = withoutAnimation
   },

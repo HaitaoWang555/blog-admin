@@ -16,6 +16,7 @@
           ref="upload"
           drag
           :on-change="handleChange"
+          :file-list="fileList"
           :auto-upload="false"
           action="xx"
           :http-request="handleUpload"
@@ -71,7 +72,8 @@ export default {
           { type: 'string', required: true, message: '请上传文件', trigger: 'change' }
         ]
       },
-      loading: false
+      loading: false,
+      fileList: []
     }
   },
   computed: {
@@ -82,6 +84,7 @@ export default {
   methods: {
     resetForm(formName) {
       this.$refs[formName].resetFields()
+      this.$refs.upload.clearFiles()
     },
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
@@ -112,6 +115,7 @@ export default {
       })
     },
     handleChange(file, fileList) {
+      this.fileList = fileList.slice(-1)
       if (file) {
         if (file.status === 'ready') {
           this.article.file = 'ready'

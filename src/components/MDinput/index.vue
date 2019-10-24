@@ -200,7 +200,7 @@ export default {
 <style lang="scss" scoped>
   // Fonts:
   $font-size-base: 16px;
-  $font-size-small: 18px;
+  $font-size-small: 14px;
   $font-size-smallest: 12px;
   $font-weight-normal: normal;
   $font-weight-bold: bold;
@@ -229,9 +229,8 @@ export default {
 
   // Mixins:
   @mixin slided-top() {
-    top: - ($font-size-base);
+    top: - ($font-size-smallest);
     left: 0;
-    font-size: $font-size-base;
     font-weight: $font-weight-bold;
   }
 
@@ -263,7 +262,7 @@ export default {
     }
     .material-input {
       font-size: $font-size-base;
-      padding: $spacer $spacer $spacer - $apixel * 10 $spacer / 2;
+      padding: $spacer 0;
       display: block;
       width: 100%;
       border: none;

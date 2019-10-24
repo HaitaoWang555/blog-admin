@@ -74,7 +74,9 @@ service.interceptors.response.use(
   },
   error => {
     console.log('err' + error) // for debug
-    const message = error.response ? error.response.data.msg : error.message
+    const message = error.response
+      ? error.response.data.msg || error.response.data
+      : error.message || error
     Message({
       message,
       type: 'error',

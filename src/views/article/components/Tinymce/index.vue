@@ -27,7 +27,10 @@ export default {
     id: {
       type: String,
       default: function() {
-        return 'vue-tinymce-' + +new Date() + ((Math.random() * 1000).toFixed(0) + '')
+        const id = window.tinymce
+          ? window.tinymce.settings.selector.slice(1)
+          : 'vue-tinymce-' + +new Date() + ((Math.random() * 1000).toFixed(0) + '')
+        return id
       }
     },
     value: {
@@ -116,7 +119,7 @@ export default {
         selector: `#${this.tinymceId}`,
         language: this.languageTypeList['zh'],
         height: this.height,
-        body_class: 'panel-body ',
+        body_class: 'tui-editor-contents',
         object_resizing: false,
         toolbar: this.toolbar.length > 0 ? this.toolbar : toolbar,
         menubar: this.menubar,
@@ -125,8 +128,7 @@ export default {
         powerpaste_word_import: 'clean',
         code_dialog_height: 450,
         code_dialog_width: 1000,
-        advlist_bullet_styles: 'square',
-        advlist_number_styles: 'default',
+        convert_urls: false,
         imagetools_cors_hosts: ['www.tinymce.com', 'codepen.io'],
         default_link_target: '_blank',
         link_title: false,
@@ -137,6 +139,9 @@ export default {
           })
         }
       })
+      if (this.value) {
+        this.setValue(this.value)
+      }
     },
     destroyTinymce() {
       const tinymce = window.tinymce.get(this.tinymceId)

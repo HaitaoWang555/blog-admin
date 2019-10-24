@@ -15,59 +15,57 @@
         <el-row>
 
           <el-col :span="24">
-            <el-form-item style="margin-bottom: 25px;" prop="title">
+            <el-form-item style="margin-bottom: 10px;" prop="title">
               <MDinput v-model="postForm.title" :maxlength="100" name="name" required>
                 标题
               </MDinput>
             </el-form-item>
 
             <div class="postInfo-container">
-              <el-row>
-                <el-col :span="4">
-                  <el-form-item label-width="80px" label="标签&分类" class="postInfo-container-item">
-                    <el-select
-                      v-model="metaValue"
-                      value-key="name"
-                      multiple
-                      collapse-tags
-                      filterable
-                      default-first-option
-                      class="filter-item"
-                      placeholder="分类/标签"
+              <div style="width: 270px" class="postInfo-container-item">
+                <el-form-item style="margin-bottom: 0;" label-width="80px" label="标签&分类">
+                  <el-select
+                    v-model="metaValue"
+                    value-key="name"
+                    multiple
+                    collapse-tags
+                    filterable
+                    default-first-option
+                    class="filter-item"
+                    placeholder="分类/标签"
+                  >
+                    <el-option
+                      v-for="item in metaOptions"
+                      :key="item.id"
+                      :label="item.name"
+                      :value="item"
                     >
-                      <el-option
-                        v-for="item in metaOptions"
-                        :key="item.id"
-                        :label="item.name"
-                        :value="item"
-                      >
-                        <span style="float: left">{{ item.name }}</span>
-                        <span style="float: right; margin-right:15px;">
-                          <el-tag :type="item.type | statusFilterMeta">
-                            {{ item.type | statusTextFilterMeta }}
-                          </el-tag>
-                        </span>
-                      </el-option>
-                    </el-select>
-                  </el-form-item>
-                </el-col>
-                <el-col :span="2" class="text-center">
-                  <el-button type="primary" @click="createMeta">
-                    创建新标签
-                  </el-button>
-                </el-col>
-                <el-col :span="2" class="text-center">
-                  <el-button type="primary" @click="upload">
-                    上传文章
-                  </el-button>
-                </el-col>
-                <el-col :span="4" class="text-center">
-                  <el-select v-model="editorModel" placeholder="请选择" @change="changeEditorModel">
-                    <el-option label="MarkDown编辑器" value="markdownEditor" />
-                    <el-option label="富文本编辑器" value="tinymceEditor" />
+                      <span style="float: left">{{ item.name }}</span>
+                      <span style="float: right; margin-right:15px;">
+                        <el-tag :type="item.type | statusFilterMeta">
+                          {{ item.type | statusTextFilterMeta }}
+                        </el-tag>
+                      </span>
+                    </el-option>
                   </el-select>
-                </el-col>
-              </el-row>
+                </el-form-item>
+              </div>
+              <div style="width: 110px" class="text-center postInfo-container-item">
+                <el-button type="primary" @click="createMeta">
+                  创建新标签
+                </el-button>
+              </div>
+              <div style="width: 110px" class="text-center postInfo-container-item">
+                <el-button type="primary" @click="upload">
+                  上传文章
+                </el-button>
+              </div>
+              <div style="width: 220px" class="text-center postInfo-container-item">
+                <el-select v-model="editorModel" placeholder="请选择" @change="changeEditorModel">
+                  <el-option label="MarkDown编辑器" value="markdownEditor" />
+                  <el-option label="富文本编辑器" value="tinymceEditor" />
+                </el-select>
+              </div>
             </div>
           </el-col>
         </el-row>
@@ -78,7 +76,7 @@
             <markdown-editor
               ref="markdownEditor"
               class="markdown-editor"
-              height="calc(100vh - 260px)"
+              height="calc(100vh - 238px)"
               :value="postForm.content"
             />
           </template>
@@ -86,7 +84,7 @@
             v-else
             ref="markdownEditor"
             class="markdown-editor"
-            height="calc(100vh - 400px)"
+            height="calc(100vh - 377px)"
             :value="postForm.content"
           />
         </el-form-item>
@@ -235,6 +233,7 @@ export default {
         this.postForm.content = this.getContent()
         this.postForm.isUpdateContent = 1
       }
+      console.log(this.postForm.content)
       this.postForm.allow_comment = !this.postForm.comment_disabled
       this.$refs.postForm.validate(valid => {
         if (valid) {

@@ -27,8 +27,8 @@ export default {
     id: {
       type: String,
       default: function() {
-        const id = window.tinymce
-          ? window.tinymce.settings.selector.slice(1)
+        const id = window.tinymce && window.tinymce.id
+          ? window.tinymce.id
           : 'vue-tinymce-' + +new Date() + ((Math.random() * 1000).toFixed(0) + '')
         return id
       }
@@ -82,7 +82,7 @@ export default {
   },
   watch: {
     value(val) {
-      if (val) {
+      if (val && window.tinymce) {
         this.$nextTick(() =>
           window.tinymce.get(this.tinymceId).setContent(val || ''))
       }
@@ -134,15 +134,17 @@ export default {
         imagetools_toolbar: 'rotateleft rotateright | flipv fliph | imageoptions',
         link_title: false,
         nonbreaking_force_tab: true, // inserting nonbreaking space &nbsp; need Nonbreaking Space Plugin
+        init_instance_callback: editor => {
+          if (_this.value) {
+            editor.setContent(_this.value)
+          }
+        },
         setup(editor) {
           editor.on('FullscreenStateChanged', (e) => {
             _this.fullscreen = e.state
           })
         }
       })
-      if (this.value) {
-        this.setValue(this.value)
-      }
     },
     destroyTinymce() {
       const tinymce = window.tinymce.get(this.tinymceId)

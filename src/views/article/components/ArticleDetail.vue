@@ -233,7 +233,6 @@ export default {
         this.postForm.content = this.getContent()
         this.postForm.isUpdateContent = 1
       }
-      console.log(this.postForm.content)
       this.postForm.allow_comment = !this.postForm.comment_disabled
       this.$refs.postForm.validate(valid => {
         if (valid) {

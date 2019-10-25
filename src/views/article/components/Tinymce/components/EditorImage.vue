@@ -10,6 +10,7 @@
         :on-success="handleSuccess"
         :before-upload="beforeUpload"
         :on-change="handleChange"
+        multiple
         class="editor-slide-upload"
         action="xx"
         list-type="picture-card"

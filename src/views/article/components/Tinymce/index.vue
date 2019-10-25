@@ -129,8 +129,9 @@ export default {
         code_dialog_height: 450,
         code_dialog_width: 1000,
         convert_urls: false,
-        imagetools_cors_hosts: ['www.tinymce.com', 'codepen.io'],
+        imagetools_cors_hosts: [],
         default_link_target: '_blank',
+        imagetools_toolbar: 'rotateleft rotateright | flipv fliph | imageoptions',
         link_title: false,
         nonbreaking_force_tab: true, // inserting nonbreaking space &nbsp; need Nonbreaking Space Plugin
         setup(editor) {

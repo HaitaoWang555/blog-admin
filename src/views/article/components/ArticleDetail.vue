@@ -84,7 +84,7 @@
             v-else
             ref="markdownEditor"
             class="markdown-editor"
-            height="calc(100vh - 377px)"
+            height="calc(100vh - 397px)"
             :value="postForm.content"
           />
         </el-form-item>
@@ -348,6 +348,7 @@ export default {
       this.$refs.markdownEditor.setValue(value)
     },
     changeEditorModel(val) {
+      this.postForm.content = this.getContent()
       setSetting(val)
     }
   }

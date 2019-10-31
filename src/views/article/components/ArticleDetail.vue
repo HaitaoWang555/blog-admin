@@ -70,7 +70,7 @@
           </el-col>
         </el-row>
 
-        <el-form-item prop="content">
+        <el-form-item v-if="showEditor" prop="content">
           <template v-if="editorModel === 'markdownEditor'">
             <Screenfull class="screenfull" screenfull-name="markdown-editor" />
             <markdown-editor
@@ -120,6 +120,7 @@ import { getSetting, setSetting } from '@/utils/auth'
 
 const defaultForm = {
   status: 'draft',
+  type: getSetting() || 'markdownEditor', // 使用编辑器类型
   title: '', // 文章题目
   content: '', // 文章内容
   id: undefined,
@@ -190,6 +191,7 @@ export default {
       dialogUpload: false,
       metaData: {},
       uploadData: {},
+      showEditor: false, // 编辑器根据文章类型展示
       editorModel: 'markdownEditor'
     }
   },
@@ -200,6 +202,7 @@ export default {
       this.fetchData(id)
     } else {
       this.postForm = Object.assign({}, defaultForm)
+      this.showEditor = true
       this.initMetas()
     }
 
@@ -213,6 +216,8 @@ export default {
       fetchArticle(id).then(response => {
         this.postForm = response.data
         this.postForm.comment_disabled = !this.postForm.allow_comment
+        this.editorModel = this.postForm.type
+        this.showEditor = true
         this.initMetas()
       }).catch(err => {
         console.log(err)

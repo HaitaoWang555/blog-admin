@@ -265,6 +265,7 @@ export default {
       } else {
         this.listQuery.meta = null
       }
+      this.listQuery.status = this.listQuery.status || 'publish'
       this.listQuery.page = 1
       this.getList()
     },

@@ -243,6 +243,7 @@ export default {
         if (valid) {
           this.loading = true
           this.postForm.status = 'publish'
+          this.postForm.type = getSetting()
           if (!this.isEdit) {
             this.createArticle()
           } else {
@@ -264,6 +265,7 @@ export default {
         return
       }
       this.postForm.status = 'draft'
+      this.postForm.type = getSetting()
       this.initMetaId()
       this.postForm.allow_comment = !this.postForm.comment_disabled
       this.loading = true

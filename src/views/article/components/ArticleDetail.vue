@@ -234,10 +234,9 @@ export default {
     submitForm() {
       this.initMetaId()
       const newContent = this.getContent()
-      if (newContent !== this.postForm.content) {
-        this.postForm.content = this.getContent()
-        this.postForm.isUpdateContent = 1
-      }
+      this.postForm.content = newContent !== this.postForm.content
+        ? newContent
+        : null
       this.postForm.allow_comment = !this.postForm.comment_disabled
       this.$refs.postForm.validate(valid => {
         if (valid) {
@@ -285,6 +284,7 @@ export default {
       this.loading = false
     },
     async updateArticle() {
+      console.log(this.postForm)
       const res = await updateArticle(this.postForm)
       if (res) {
         this.$tips(res)

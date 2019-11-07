@@ -284,7 +284,6 @@ export default {
       this.loading = false
     },
     async updateArticle() {
-      console.log(this.postForm)
       const res = await updateArticle(this.postForm)
       if (res) {
         this.$tips(res)
@@ -356,14 +355,20 @@ export default {
         const start = capture.lastIndexOf('\\') + 1
         let newSrc = capture.slice(0, start) + 'thumbnail\\' + capture.slice(start)
         newSrc = newSrc.replace('.png', '.png.jpg')
-        const imgType = ['.png', '.jpg', '.jpeg']
-        if (imgType.includes(capture)) {
+        if (this.isImgType(capture)) {
           return match.replace(capture, newSrc)
         } else {
           return match
         }
       })
       this.$refs.markdownEditor.setValue(value)
+    },
+    isImgType(url) {
+      const imgType = ['.png', '.jpg', '.jpeg']
+      for (let index = 0; index < imgType.length; index++) {
+        const element = imgType[index]
+        return url.indexOf(element) > -1
+      }
     },
     changeEditorModel(val) {
       this.postForm.content = this.getContent()

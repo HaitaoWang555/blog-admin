@@ -350,7 +350,19 @@ export default {
       this.uploadData = defaultMeta
     },
     completeUpload(res) {
-      const value = res.data
+      let value = res.data
+      if (!value) return
+      value = value.replace(/<img [^>]*src=['"]([^'"]+)[^>]*>/gi, (match, capture) => {
+        const start = capture.lastIndexOf('\\') + 1
+        let newSrc = capture.slice(0, start) + 'thumbnail\\' + capture.slice(start)
+        newSrc = newSrc.replace('.png', '.png.jpg')
+        const imgType = ['.png', '.jpg', '.jpeg']
+        if (imgType.includes(capture)) {
+          return match.replace(capture, newSrc)
+        } else {
+          return match
+        }
+      })
       this.$refs.markdownEditor.setValue(value)
     },
     changeEditorModel(val) {

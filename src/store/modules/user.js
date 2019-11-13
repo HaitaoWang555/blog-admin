@@ -33,11 +33,8 @@ const actions = {
       login({ username: username.trim(), password: password }).then(response => {
         tips(response)
         const { data } = response
-        const { username, icon } = data
         commit('SET_TOKEN', 'admin-token')
-        setToken('admin-token')
-        commit('SET_NAME', username)
-        commit('SET_AVATAR', icon)
+        setToken(data)
         resolve()
       }).catch(error => {
         console.log(error)

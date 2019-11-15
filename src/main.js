@@ -16,6 +16,9 @@ import { tips } from '@/utils/tips'
 import '@/icons' // icon
 import '@/permission' // permission control
 
+import waves from '@/directive/waves/waves.js' // waves directive
+Vue.directive('waves', waves)
+
 // register global utility filters.
 import * as filters from './filters' // global filters
 Object.keys(filters).forEach(key => {

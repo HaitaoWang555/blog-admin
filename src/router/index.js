@@ -98,12 +98,19 @@ export const constantRoutes = [
     ]
   },
   {
-    path: 'external-link',
+    path: '/setting',
     component: Layout,
+    redirect: '/setting/user',
+    meta: {
+      title: '系统设置',
+      url: '/setting'
+    },
     children: [
       {
-        path: 'https://panjiachen.github.io/vue-element-admin-site/#/',
-        meta: { title: '文档说明', icon: 'link' }
+        path: 'user',
+        name: 'User',
+        meta: { title: '用户管理', icon: 'user' },
+        component: () => import('@/views/setting/user')
       }
     ]
   },

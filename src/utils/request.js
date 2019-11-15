@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { MessageBox, Message } from 'element-ui'
+import { MessageBox, Message, Notification } from 'element-ui'
 import store from '@/store'
 import { getToken } from '@/utils/auth'
 const qs = require('qs')
@@ -75,13 +75,14 @@ service.interceptors.response.use(
   },
   error => {
     console.log('err' + error) // for debug
-    const message = error.response
-      ? error.response.data.msg || error.response.data
-      : error.message || error
-    Message({
-      message,
+    const message = error.response && error.response.data.msg
+      ? error.response.data.msg
+      : error.message
+    Notification({
+      message: message,
+      title: `服务出错，请稍后重试`,
       type: 'error',
-      duration: 5 * 1000
+      duration: 0
     })
     return null
   }

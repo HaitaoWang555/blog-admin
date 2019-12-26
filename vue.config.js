@@ -36,7 +36,7 @@ module.exports = {
     proxy: {
       // detail: https://cli.vuejs.org/config/#devserver-proxy
       '/api': {
-        target: process.env.proxy_target,
+        target: process.env.VUE_APP_PROXY_TARGET,
         ws: true,
         changeOrigin: true,
         pathRewrite: {
@@ -44,7 +44,7 @@ module.exports = {
         }
       },
       '/upload': {
-        target: process.env.proxy_target,
+        target: process.env.VUE_APP_PROXY_TARGET,
         ws: true,
         changeOrigin: true,
         pathRewrite: {

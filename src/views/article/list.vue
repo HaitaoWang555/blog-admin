@@ -92,9 +92,9 @@
 
       <el-table-column min-width="300px" label="标题">
         <template slot-scope="scope">
-          <router-link :to="'/article/edit/'+scope.row.id" class="link-type">
+          <a :href="frontUrl + 'article/' + scope.row.id" target="/article/" class="link-type">
             <span>{{ scope.row.title }}</span>
-          </router-link>
+          </a>
         </template>
       </el-table-column>
       <el-table-column min-width="120px" label="分类">
@@ -231,7 +231,8 @@ export default {
         title: null,
         status: null,
         sortBy: null
-      }
+      },
+      frontUrl: process.env.VUE_APP_FORNT_URL
     }
   },
   created() {

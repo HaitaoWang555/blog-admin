@@ -61,6 +61,9 @@
                 </el-button>
               </div>
               <div style="width: 220px" class="text-center postInfo-container-item">
+                <input type="file" name="files" webkitdirectory multiple @change="uploadBatch">
+              </div>
+              <div style="width: 220px" class="text-center postInfo-container-item">
                 <el-select v-model="editorModel" placeholder="请选择" @change="changeEditorModel">
                   <el-option label="MarkDown编辑器" value="markdownEditor" />
                   <el-option label="富文本编辑器" value="tinymceEditor" />
@@ -112,6 +115,7 @@ import Screenfull from '@/components/Screenfull'
 import Sticky from '@/components/Sticky' // 粘性header组件
 import { fetchArticle, createArticle, updateArticle } from '@/api/article'
 import { fetchList } from '@/api/metas'
+import { uploadArticleDir } from '@/api/public'
 import { validStrLen } from '@/utils/validate'
 import { CommentDropdown } from './Dropdown'
 import Meta from '../../metas/meta'
@@ -374,6 +378,16 @@ export default {
     changeEditorModel(val) {
       this.postForm.content = this.getContent()
       setSetting(val)
+    },
+    uploadBatch(e) {
+      const formData = new FormData()
+      const data = e.target.files
+      if (data) {
+        [].forEach.call(data, item => {
+          formData.append('file', item)
+        })
+      }
+      uploadArticleDir(formData)
     }
   }
 }

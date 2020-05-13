@@ -95,7 +95,11 @@ export default {
         ...this.editorOptions
       })
       if (this.value) {
-        this.setHtml(this.value)
+        if (this.value.indexOf('<') > -1 && this.value.indexOf('<') < 10) {
+          this.setHtml(this.value)
+        } else {
+          this.setValue(this.value)
+        }
       }
       // this.editor.on('change', () => {
       //   this.$emit('input', this.editor.getHtml())

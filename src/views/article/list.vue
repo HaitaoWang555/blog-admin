@@ -66,6 +66,9 @@
       >
         {{ item.label }}
       </el-button>
+      <div style="display:none">
+        <input id="webkitdirectory" type="file" name="files" webkitdirectory multiple @change="uploadBatch">
+      </div>
     </div>
 
     <el-table
@@ -150,6 +153,7 @@
 import { fetchList, delArticles } from '@/api/article'
 import { fetchList as getMetas } from '@/api/metas'
 import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
+import { uploadArticleDir } from '@/api/public'
 
 export default {
   name: 'ArticleList',
@@ -194,11 +198,11 @@ export default {
           value: 'add',
           color: '#3399ff'
         },
-        // {
-        //   label: '导出',
-        //   value: 'export',
-        //   color: '#3399ff'
-        // },
+        {
+          label: '导入文件夹',
+          value: 'importDir',
+          color: '#3399ff'
+        },
         {
           label: '批量删除',
           value: 'del',
@@ -282,6 +286,9 @@ export default {
         case 'del':
           this.del()
           break
+        case 'importDir':
+          this.clickInputDirectory()
+          break
         default:
           break
       }
@@ -290,8 +297,14 @@ export default {
       this.$router.push('/article/create')
     },
     async del() {
+      if (this.multipleSelection.length < 0) {
+        this.$message({
+          message: '请选择要删除的内容',
+          type: 'warning'
+        })
+        return
+      }
       const ids = this.multipleSelection.map(i => i.id).join(',')
-      if (!ids) return
       const res = await delArticles(ids)
       if (!res) return
       this.$tips(res)
@@ -309,6 +322,25 @@ export default {
       const sortBy = columnVal + ' ' + order
       this.listQuery.sortBy = sortBy
       this.getList()
+    },
+    clickInputDirectory() {
+      document.querySelector('#webkitdirectory').click()
+    },
+    uploadBatch(e) {
+      const formData = new FormData()
+      const data = e.target.files
+      if (data) {
+        [].forEach.call(data, item => {
+          const suffix = item.name.slice(item.name.lastIndexOf('.') + 1)
+          if (!['md', 'doc', 'docx'].includes(suffix)) return
+          formData.append('file', item)
+        })
+      }
+      uploadArticleDir(formData).then(res => {
+        this.$tips(res)
+        document.querySelector('#webkitdirectory').value = null
+        this.getList()
+      })
     }
   }
 }

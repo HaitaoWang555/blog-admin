@@ -326,6 +326,7 @@ export default {
       color: $color-black;
       text-indent: $index;
       border-bottom: 1px solid $color-grey-light;
+      padding-bottom: 6px;
     }
     .material-label {
       color: $color-grey;

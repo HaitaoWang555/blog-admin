@@ -13,6 +13,10 @@ export function upload(list, option) {
     }
   })
 }
+/**
+ * MarkdownEditor 模式下 上传图片
+ * @param {*} list 图片
+ */
 export function uploadMd(list) {
   return request({
     url: '/upload/local',
@@ -32,5 +36,13 @@ export function uploadArticle(list, option) {
       }
       option.onProgress(e)
     }
+  })
+}
+
+export function uploadArticleDir(formData) {
+  return request({
+    url: '/article/uploadDir',
+    method: 'post',
+    data: formData
   })
 }

@@ -119,7 +119,7 @@
 </template>
 
 <script>
-import { fetchList, delMetas } from '@/api/metas'
+import { fetchList, delMetas, downloadList, downloadTemplate } from '@/api/metas'
 import Pagination from '@/components/Pagination'
 import Meta from './meta'
 
@@ -303,14 +303,27 @@ export default {
       this.sortBy = sortBy
       this.getList(null, sortBy)
     },
-    export() {
+    async export() {
       const ids = this.multipleSelection.map(i => i.id).join(',')
-      const url = '/api/manage/download/meta' + '?ids=' + ids
-      window.open(url)
+
+      const response = await downloadList(ids)
+      this.downloadFile(response)
     },
-    download() {
-      const url = '/api/manage/download/metaTemplate'
-      window.open(url)
+    async download() {
+      const response = await downloadTemplate()
+      this.downloadFile(response)
+    },
+    downloadFile(response) {
+      if (!response) return
+      const fileName = response.headers['content-disposition'].split(';')[1].split('filename=')[1]
+      const data = response.data
+      const objectURL = window.URL.createObjectURL(new Blob([data]))
+      const link = document.createElement('a')
+      link.href = objectURL
+      link.setAttribute('download', decodeURIComponent(fileName))
+      document.body.appendChild(link)
+      link.click()
+      window.URL.revokeObjectURL(objectURL)
     }
   }
 }

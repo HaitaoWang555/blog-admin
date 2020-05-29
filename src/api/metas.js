@@ -31,3 +31,19 @@ export function delMetas(ids) {
     params: { ids }
   })
 }
+
+export function downloadList(ids) {
+  return request({
+    url: '/download/meta',
+    method: 'get',
+    responseType: 'blob',
+    params: { ids }
+  })
+}
+export function downloadTemplate() {
+  return request({
+    url: '/download/metaTemplate',
+    method: 'get',
+    responseType: 'blob'
+  })
+}

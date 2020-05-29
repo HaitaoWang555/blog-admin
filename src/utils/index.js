@@ -9,6 +9,7 @@
  * @returns {string}
  */
 export function parseTime(time, cFormat) {
+  if (!time) return null
   if (arguments.length === 0) {
     return null
   }

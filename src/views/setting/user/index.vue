@@ -15,6 +15,7 @@
     <el-table
       v-loading="listLoading"
       :data="list"
+      height="calc(100vh - 230px)"
       border
       fit
       highlight-current-row
@@ -190,6 +191,10 @@ export default {
     },
     async delUser() {
       const userIdArr = this.multipleSelection.map(i => i.id).join(',')
+      if (userIdArr.length < 1) {
+        this.$message({ message: '请选择用户', type: 'error' })
+        return
+      }
       const params = {}
       params.ids = userIdArr
       const res = await deleteUser(params)
